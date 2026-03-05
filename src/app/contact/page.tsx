@@ -1,1 +1,5 @@
-export { default } from "@/src/app/pages/contact/page";
+import { redirect } from "next/navigation";
+
+export default function ContactPage() {
+  redirect("/#contact");
+}

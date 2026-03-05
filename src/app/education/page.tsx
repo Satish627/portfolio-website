@@ -1,1 +1,5 @@
-export { default } from "@/src/app/pages/education/page";
+import { redirect } from "next/navigation";
+
+export default function EducationPage() {
+  redirect("/#education");
+}

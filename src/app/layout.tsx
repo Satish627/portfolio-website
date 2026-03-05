@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { AnimatedBackground } from "@/src/components/animated-background";
 import { Navbar } from "@/src/components/navbar";
 import { ThemeProvider } from "@/src/components/theme-provider";
 import "./globals.css";
@@ -35,8 +36,11 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <Navbar />
-          {children}
+          <AnimatedBackground />
+          <div className="relative z-10">
+            <Navbar />
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
