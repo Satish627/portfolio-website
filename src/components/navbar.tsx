@@ -15,7 +15,7 @@ import {
 } from "@/src/components/ui/sheet";
 
 const links = [
-  { href: "/#home", label: "Home" },
+  { href: "/", label: "Home" },
   { href: "/#about", label: "About" },
   { href: "/#projects", label: "Projects" },
   { href: "/#education", label: "Education" },
@@ -28,7 +28,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4">
-        <Link href="/#home" className="text-sm font-semibold tracking-wide">
+        <Link href="/" className="text-sm font-semibold tracking-wide">
           SATISH
         </Link>
 
@@ -37,7 +37,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm text-muted-foreground transition-all duration-200 hover:-translate-y-0.5 hover:text-foreground active:scale-95"
             >
               {link.label}
             </Link>
@@ -71,7 +71,7 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+                    className="rounded-md px-3 py-2 text-sm text-foreground transition-all duration-200 hover:bg-accent active:scale-[0.98]"
                   >
                     {link.label}
                   </Link>
