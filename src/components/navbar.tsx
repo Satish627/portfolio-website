@@ -15,7 +15,7 @@ import {
 } from "@/src/components/ui/sheet";
 
 const links = [
-  { href: "/", label: "Home" },
+  { href: "/#home", label: "Home" },
   { href: "/#about", label: "About" },
   { href: "/#projects", label: "Projects" },
   { href: "/#education", label: "Education" },
@@ -28,7 +28,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4">
-        <Link href="/" className="text-sm font-semibold tracking-wide">
+        <Link href="/#home" className="text-sm font-semibold tracking-wide">
           SATISH
         </Link>
 
