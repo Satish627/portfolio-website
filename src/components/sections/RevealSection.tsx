@@ -61,11 +61,10 @@ export function RevealSection({ section }: { section: PortfolioSection }) {
         {section.milestones ? <EducationTimeline milestones={section.milestones} /> : null}
         {section.experienceItems ? <ExperienceTimeline items={section.experienceItems} /> : null}
         {section.featuredProjects ? <ProjectsShowcase projects={section.featuredProjects} /> : null}
-        {section.contactInfo && section.cv && section.availability ? (
+        {section.contactInfo && section.availability ? (
           <ContactCollaborationGrid
             availability={section.availability}
             contactInfo={section.contactInfo}
-            cv={section.cv}
           />
         ) : null}
       </motion.div>
