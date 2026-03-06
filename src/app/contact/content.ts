@@ -1,5 +1,6 @@
 export const contactSection = {
   id: "contact",
+  kicker: "Let's Build Something",
   title: "Contact",
   description:
     "Get in touch for collaboration opportunities, project ideas, or development roles.",

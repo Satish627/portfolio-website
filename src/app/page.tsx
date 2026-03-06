@@ -17,6 +17,8 @@ import {
   ArrowUpRight,
   BriefcaseBusiness,
   Check,
+  ChevronDown,
+  ChevronUp,
   Code2,
   Copy,
   Download,
@@ -31,6 +33,7 @@ import {
 import { aboutSection } from "@/src/app/about/content";
 import { contactSection } from "@/src/app/contact/content";
 import { educationSection } from "@/src/app/education/content";
+import { experienceSection } from "@/src/app/experience/content";
 import { homeSection } from "@/src/app/home/content";
 import { projectsSection } from "@/src/app/projects/content";
 import { ScrollStatus } from "@/src/components/scroll-status";
@@ -38,6 +41,7 @@ import { Button } from "@/src/components/ui/button";
 
 const sections = [
   aboutSection,
+  experienceSection,
   projectsSection,
   educationSection,
   contactSection,
@@ -69,6 +73,20 @@ type ProjectItem = {
   summary: string;
   highlight: string;
   stack: readonly string[];
+  links?: readonly {
+    label: string;
+    href: string;
+  }[];
+};
+
+type ExperienceItem = {
+  role: string;
+  company: string;
+  period: string;
+  location: string;
+  summary: string;
+  highlights: readonly string[];
+  type: string;
 };
 
 type ContactInfoItem = {
@@ -143,7 +161,7 @@ export default function Home() {
       >
         <div className="mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-5xl items-center gap-6 px-4 py-2 md:grid-cols-[1.15fr_0.85fr] md:py-4">
           <motion.div
-            className="order-2 flex flex-col gap-4 md:order-1"
+            className="order-1 flex flex-col gap-4"
             variants={staggerVariants}
           >
             <motion.p
@@ -198,7 +216,7 @@ function RevealSection({
   section: PortfolioSection;
 }) {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const sectionInView = useInView(sectionRef, { once: false, amount: 0.35 });
+  const sectionInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   return (
     <motion.section
@@ -252,6 +270,10 @@ function RevealSection({
 
         {"milestones" in section && section.milestones ? (
           <EducationTimeline milestones={section.milestones} />
+        ) : null}
+
+        {"experienceItems" in section && section.experienceItems ? (
+          <ExperienceTimeline items={section.experienceItems} />
         ) : null}
 
         {"featuredProjects" in section && section.featuredProjects ? (
@@ -582,22 +604,57 @@ function ProjectsShowcase({
   projects: readonly ProjectItem[];
 }) {
   const projectsRef = useRef<HTMLDivElement | null>(null);
-  const projectsInView = useInView(projectsRef, { once: false, amount: 0.25 });
+  const projectsInView = useInView(projectsRef, { once: false, amount: 0.15 });
   const reduceMotion = useReducedMotion();
+  const [showAllProjects, setShowAllProjects] = useState(false);
   const projectIcons = [Rocket, Code2, FolderKanban] as const;
+  const visibleProjects = showAllProjects ? projects : projects.slice(0, 4);
+  const shouldRevealProjects = projectsInView || showAllProjects;
+
+  const handleToggleProjects = () => {
+    if (showAllProjects) {
+      setShowAllProjects(false);
+
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          const sectionTop = projectsRef.current
+            ? projectsRef.current.getBoundingClientRect().top + window.scrollY - 104
+            : 0;
+
+          window.scrollTo({
+            top: Math.max(0, sectionTop),
+            behavior: "smooth",
+          });
+        });
+      });
+
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        window.scrollBy({
+          top: Math.min(280, window.innerHeight * 0.34),
+          behavior: "smooth",
+        });
+      });
+    });
+
+    setShowAllProjects((current) => !current);
+  };
 
   return (
     <motion.div
       ref={projectsRef}
       className="relative mt-6 w-full"
       initial={{ opacity: 0, y: 20 }}
-      animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      animate={shouldRevealProjects ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <motion.div
         className="pointer-events-none absolute -left-10 -top-8 h-40 w-40 rounded-full bg-amber-300/20 blur-3xl dark:bg-amber-500/20"
         animate={
-          reduceMotion || !projectsInView
+          reduceMotion || !shouldRevealProjects
             ? { opacity: 0.55, scale: 1 }
             : { opacity: [0.3, 0.7, 0.3], scale: [0.95, 1.08, 0.95] }
         }
@@ -610,7 +667,7 @@ function ProjectsShowcase({
       <motion.div
         className="pointer-events-none absolute -bottom-10 right-0 h-44 w-44 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-500/20"
         animate={
-          reduceMotion || !projectsInView
+          reduceMotion || !shouldRevealProjects
             ? { opacity: 0.5, scale: 1 }
             : { opacity: [0.28, 0.62, 0.28], scale: [1, 1.1, 1] }
         }
@@ -638,7 +695,7 @@ function ProjectsShowcase({
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          {projects.map((project, index) => {
+          {visibleProjects.map((project, index) => {
             const Icon = projectIcons[index % projectIcons.length];
             return (
               <motion.article
@@ -649,7 +706,7 @@ function ProjectsShowcase({
                     : { opacity: 0, y: 18, scale: 0.98, filter: "blur(8px)" }
                 }
                 animate={
-                  projectsInView
+                  shouldRevealProjects
                     ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
                     : reduceMotion
                       ? { opacity: 0 }
@@ -694,9 +751,171 @@ function ProjectsShowcase({
                     </span>
                   ))}
                 </div>
+                {project.links?.length ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {project.links.map((link) => {
+                      const isExternal = link.href.startsWith("http");
+                      return (
+                        <a
+                          key={`${project.title}-${link.href}`}
+                          href={link.href}
+                          target={isExternal ? "_blank" : undefined}
+                          rel={isExternal ? "noreferrer" : undefined}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary/45 hover:text-primary"
+                        >
+                          {link.label}
+                          <ArrowUpRight className="h-3 w-3" />
+                        </a>
+                      );
+                    })}
+                  </div>
+                ) : null}
               </motion.article>
             );
           })}
+        </div>
+        {projects.length > 4 ? (
+          <div className="mt-5 flex justify-center">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleToggleProjects}
+              className="min-w-48"
+            >
+              {showAllProjects ? "Show fewer projects" : "Show more projects"}
+              {showAllProjects ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        ) : null}
+      </div>
+    </motion.div>
+  );
+}
+
+function ExperienceTimeline({
+  items,
+}: {
+  items: readonly ExperienceItem[];
+}) {
+  const experienceRef = useRef<HTMLDivElement | null>(null);
+  const experienceInView = useInView(experienceRef, { once: false, amount: 0.25 });
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      ref={experienceRef}
+      className="relative mt-6 w-full"
+      initial={{ opacity: 0, y: 20 }}
+      animate={experienceInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+    >
+      <motion.div
+        className="pointer-events-none absolute -left-8 -top-6 h-36 w-36 rounded-full bg-sky-300/20 blur-3xl dark:bg-sky-500/20"
+        animate={
+          reduceMotion || !experienceInView
+            ? { opacity: 0.55, scale: 1 }
+            : { opacity: [0.3, 0.7, 0.3], scale: [0.95, 1.08, 0.95] }
+        }
+        transition={
+          reduceMotion
+            ? undefined
+            : { duration: 5.2, repeat: Infinity, ease: "easeInOut" }
+        }
+      />
+
+      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-b from-background/80 via-card/90 to-card/75 p-5 shadow-[0_22px_55px_-42px_rgba(0,0,0,0.7)] backdrop-blur-xl md:p-6">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <div>
+            <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              <BriefcaseBusiness className="h-3.5 w-3.5" />
+              Work Experience
+            </p>
+            <h3 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
+              Professional roles and internship delivery
+            </h3>
+          </div>
+          <span className="rounded-full border border-border/70 bg-background/75 px-3 py-1 text-xs font-medium text-foreground/80">
+            {items.length} Roles
+          </span>
+        </div>
+
+        <div className="relative pl-7">
+          <div className="absolute bottom-1 left-2 top-1 w-px bg-border/80" />
+          <motion.div
+            className="absolute bottom-1 left-2 top-1 w-px origin-top bg-primary/75"
+            initial={{ scaleY: 0 }}
+            animate={experienceInView ? { scaleY: 1 } : { scaleY: 0 }}
+            transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
+          />
+
+          <div className="space-y-4">
+            {items.map((item, index) => (
+              <motion.article
+                key={`${item.role}-${item.company}`}
+                initial={
+                  reduceMotion
+                    ? { opacity: 0 }
+                    : { opacity: 0, x: 24, y: 16, filter: "blur(8px)" }
+                }
+                animate={
+                  experienceInView
+                    ? { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
+                    : reduceMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, x: 24, y: 16, filter: "blur(8px)" }
+                }
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.08,
+                  ease: [0.2, 0.8, 0.2, 1],
+                }}
+                whileHover={
+                  reduceMotion
+                    ? undefined
+                    : {
+                        y: -2,
+                        scale: 1.01,
+                        transition: { type: "spring", stiffness: 220, damping: 20 },
+                      }
+                }
+                className="relative rounded-2xl border border-border/70 bg-background/80 p-4 backdrop-blur transition-colors hover:border-primary/45 md:p-5"
+              >
+                <span className="absolute -left-8 top-7 h-3 w-3 rounded-full border-2 border-background bg-primary" />
+
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="rounded-full border border-border/70 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground/85">
+                    {item.type}
+                  </p>
+                  <p className="text-xs font-medium uppercase tracking-[0.11em] text-muted-foreground">
+                    {item.period}
+                  </p>
+                </div>
+
+                <h4 className="mt-2 text-lg font-semibold tracking-tight">
+                  {item.role}
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  {item.company} · {item.location}
+                </p>
+                <p className="mt-2 text-sm text-muted-foreground">{item.summary}</p>
+
+                <ul className="mt-3 grid gap-1.5">
+                  {item.highlights.map((highlight) => (
+                    <li
+                      key={`${item.company}-${highlight}`}
+                      className="text-sm text-foreground/90"
+                    >
+                      • {highlight}
+                    </li>
+                  ))}
+                </ul>
+              </motion.article>
+            ))}
+          </div>
         </div>
       </div>
     </motion.div>
@@ -953,7 +1172,7 @@ function HeroImageCard({ inView }: { inView: boolean }) {
 
   return (
     <motion.div
-      className="relative order-1 mx-auto w-full max-w-[250px] md:order-2 md:max-w-[300px]"
+      className="relative order-2 mx-auto w-full max-w-[250px] md:order-2 md:max-w-[300px]"
       variants={itemVariants}
       style={{ perspective: 1300 }}
       onMouseMove={handleMouseMove}

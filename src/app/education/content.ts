@@ -1,5 +1,6 @@
 export const educationSection = {
   id: "education",
+  kicker: "Learning That Ships",
   title: "Education",
   description:
     "My learning path in software engineering, from academic foundations to practical system-building experience.",
