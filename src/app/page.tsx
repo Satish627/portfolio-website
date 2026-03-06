@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import anime from "animejs";
 import {
   motion,
   type Variants,
@@ -138,9 +139,43 @@ const lineVariants: Variants = {
   },
 };
 
+const heroHeadlines = [
+  homeSection.headline,
+  "Full Stack Developer building scalable, user-first web products.",
+] as const;
+
 export default function Home() {
   const heroRef = useRef<HTMLElement | null>(null);
   const heroInView = useInView(heroRef, { once: false, amount: 0.35 });
+  const reduceMotion = useReducedMotion();
+  const [typedHeadline, setTypedHeadline] = useState("");
+  const [headlineIndex, setHeadlineIndex] = useState(0);
+  const [isDeletingHeadline, setIsDeletingHeadline] = useState(false);
+  const displayedHeadline = reduceMotion ? heroHeadlines[0] : typedHeadline || "\u00A0";
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const currentHeadline = heroHeadlines[headlineIndex];
+    let timeoutId: number;
+
+    if (!isDeletingHeadline && typedHeadline === currentHeadline) {
+      timeoutId = window.setTimeout(() => setIsDeletingHeadline(true), 1300);
+    } else if (isDeletingHeadline && typedHeadline.length === 0) {
+      timeoutId = window.setTimeout(() => {
+        setIsDeletingHeadline(false);
+        setHeadlineIndex((current) => (current + 1) % heroHeadlines.length);
+      }, 220);
+    } else {
+      const nextLength = typedHeadline.length + (isDeletingHeadline ? -1 : 1);
+      timeoutId = window.setTimeout(
+        () => setTypedHeadline(currentHeadline.slice(0, nextLength)),
+        isDeletingHeadline ? 36 : 62
+      );
+    }
+
+    return () => window.clearTimeout(timeoutId);
+  }, [headlineIndex, isDeletingHeadline, reduceMotion, typedHeadline]);
 
   return (
     <main className="bg-transparent">
@@ -159,7 +194,7 @@ export default function Home() {
         animate={heroInView ? "visible" : "hidden"}
         variants={sectionVariants}
       >
-        <div className="mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-5xl items-center gap-6 px-4 py-2 md:grid-cols-[1.15fr_0.85fr] md:py-4">
+        <div className="mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-5xl items-center gap-6 px-4 pb-2 pt-24 md:grid-cols-[1.15fr_0.85fr] md:pb-4 md:pt-28">
           <motion.div
             className="order-1 flex flex-col gap-4"
             variants={staggerVariants}
@@ -174,7 +209,19 @@ export default function Home() {
               className="max-w-3xl text-3xl font-semibold tracking-tight md:text-5xl"
               variants={itemVariants}
             >
-              {homeSection.headline}
+              <span className="inline-block min-h-[1.2em] align-baseline">
+                {displayedHeadline}
+              </span>
+              {reduceMotion ? null : (
+                <motion.span
+                  aria-hidden="true"
+                  className="ml-1 inline-block text-primary/85"
+                  animate={{ opacity: [0.25, 1, 0.25] }}
+                  transition={{ duration: 0.95, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  |
+                </motion.span>
+              )}
             </motion.h1>
             {homeSection.paragraphs.map((paragraph, index) => (
               <motion.p
@@ -389,6 +436,61 @@ function EducationTimeline({
   const reduceMotion = useReducedMotion();
   const [hoveredMilestone, setHoveredMilestone] = useState<string | null>(null);
 
+  const setMilestonePreview = (milestoneKey: string, isHovered: boolean) => {
+    setHoveredMilestone((current) => {
+      if (isHovered) return milestoneKey;
+      return current === milestoneKey ? null : current;
+    });
+  };
+
+  const runEducationHoverIn = (card: HTMLElement) => {
+    if (reduceMotion) return;
+
+    const logo = card.querySelector<HTMLElement>("[data-education-logo]");
+    const preview = card.querySelector<HTMLElement>("[data-education-preview]");
+
+    if (logo) {
+      anime.remove(logo);
+      anime({
+        targets: logo,
+        translateY: [0, -4],
+        rotate: [0, -2],
+        scale: [1, 1.04],
+        duration: 450,
+        easing: "easeOutQuad",
+      });
+    }
+
+    if (preview) {
+      anime.remove(preview);
+      anime({
+        targets: preview,
+        opacity: [0.82, 1],
+        translateY: [8, 0],
+        scale: [0.98, 1],
+        duration: 340,
+        easing: "easeOutQuad",
+      });
+    }
+  };
+
+  const runEducationHoverOut = (card: HTMLElement) => {
+    if (reduceMotion) return;
+
+    const logo = card.querySelector<HTMLElement>("[data-education-logo]");
+    if (!logo) return;
+
+    anime.remove(logo);
+    anime({
+      targets: logo,
+      translateY: 0,
+      rotate: 0,
+      scale: 1,
+      duration: 380,
+      easing: "easeOutQuad",
+    });
+  };
+
   return (
     <motion.div
       ref={timelineRef}
@@ -422,47 +524,34 @@ function EducationTimeline({
           />
 
           <div className="space-y-4">
-            {milestones.map((milestone, index) => (
-              <motion.a
-                key={`${milestone.period}-${milestone.institution}`}
-                href={milestone.website}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Visit ${milestone.institution} website`}
-                onHoverStart={() =>
-                  setHoveredMilestone(`${milestone.period}-${milestone.institution}`)
-                }
-                onHoverEnd={() =>
-                  setHoveredMilestone((current) =>
-                    current === `${milestone.period}-${milestone.institution}`
-                      ? null
-                      : current
-                  )
-                }
-                onFocus={() =>
-                  setHoveredMilestone(`${milestone.period}-${milestone.institution}`)
-                }
-                onBlur={() =>
-                  setHoveredMilestone((current) =>
-                    current === `${milestone.period}-${milestone.institution}`
-                      ? null
-                      : current
-                  )
-                }
-                initial={
-                  reduceMotion
-                    ? { opacity: 0 }
-                    : {
-                        opacity: 0,
-                        x: index % 2 === 0 ? -26 : 26,
-                        y: 20,
-                        filter: "blur(8px)",
-                      }
-                }
-                animate={
-                  timelineInView
-                    ? { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
-                    : reduceMotion
+            {milestones.map((milestone, index) => {
+              const milestoneKey = `${milestone.period}-${milestone.institution}`;
+
+              return (
+                <motion.a
+                  key={milestoneKey}
+                  href={milestone.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Visit ${milestone.institution} website`}
+                  onMouseEnter={(event) => {
+                    setMilestonePreview(milestoneKey, true);
+                    runEducationHoverIn(event.currentTarget);
+                  }}
+                  onMouseLeave={(event) => {
+                    setMilestonePreview(milestoneKey, false);
+                    runEducationHoverOut(event.currentTarget);
+                  }}
+                  onFocus={(event) => {
+                    setMilestonePreview(milestoneKey, true);
+                    runEducationHoverIn(event.currentTarget);
+                  }}
+                  onBlur={(event) => {
+                    setMilestonePreview(milestoneKey, false);
+                    runEducationHoverOut(event.currentTarget);
+                  }}
+                  initial={
+                    reduceMotion
                       ? { opacity: 0 }
                       : {
                           opacity: 0,
@@ -470,23 +559,35 @@ function EducationTimeline({
                           y: 20,
                           filter: "blur(8px)",
                         }
-                }
-                transition={{
-                  duration: 0.58,
-                  ease: [0.2, 0.8, 0.2, 1],
-                  delay: index * 0.12,
-                }}
-                whileHover={
-                  reduceMotion
-                    ? undefined
-                    : {
-                        y: -4,
-                        scale: 1.01,
-                        transition: { type: "spring", stiffness: 200, damping: 18 },
-                      }
-                }
-                className="group relative block rounded-2xl border border-border/75 bg-background/90 p-4 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.5)] backdrop-blur-md transition-colors hover:border-primary/45 md:p-5"
-              >
+                  }
+                  animate={
+                    timelineInView
+                      ? { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
+                      : reduceMotion
+                        ? { opacity: 0 }
+                        : {
+                            opacity: 0,
+                            x: index % 2 === 0 ? -26 : 26,
+                            y: 20,
+                            filter: "blur(8px)",
+                          }
+                  }
+                  transition={{
+                    duration: 0.58,
+                    ease: [0.2, 0.8, 0.2, 1],
+                    delay: index * 0.12,
+                  }}
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          y: -4,
+                          scale: 1.01,
+                          transition: { type: "spring", stiffness: 200, damping: 18 },
+                        }
+                  }
+                  className="group relative block rounded-2xl border border-border/75 bg-background/90 p-4 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.5)] backdrop-blur-md transition-colors hover:border-primary/45 md:p-5"
+                >
                 <motion.span
                   className="absolute -left-[29px] top-7 h-3 w-3 rounded-full border-2 border-background bg-primary"
                   animate={
@@ -504,7 +605,10 @@ function EducationTimeline({
 
                 <div className="flex flex-wrap items-start gap-4">
                   {milestone.logo ? (
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/80 bg-white p-1.5 shadow-sm">
+                    <div
+                      data-education-logo
+                      className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/80 bg-white p-1.5 shadow-sm"
+                    >
                       <Image
                         src={milestone.logo}
                         alt={`${milestone.institution} logo`}
@@ -528,10 +632,11 @@ function EducationTimeline({
                       <ExternalLink className="h-4 w-4 text-primary/80 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
 
                       <motion.div
+                        data-education-preview
                         className="pointer-events-none absolute bottom-full left-0 z-10 mb-2 hidden min-w-[200px] rounded-xl border border-primary/20 bg-background/95 p-2.5 shadow-lg md:block"
                         initial={false}
                         animate={
-                          hoveredMilestone === `${milestone.period}-${milestone.institution}`
+                          hoveredMilestone === milestoneKey
                             ? { opacity: 1, y: 0, scale: 1 }
                             : { opacity: 0, y: 10, scale: 0.96 }
                         }
@@ -580,7 +685,8 @@ function EducationTimeline({
                 </div>
 
               </motion.a>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -604,12 +710,47 @@ function ProjectsShowcase({
   projects: readonly ProjectItem[];
 }) {
   const projectsRef = useRef<HTMLDivElement | null>(null);
+  const projectsBadgeRef = useRef<HTMLSpanElement | null>(null);
   const projectsInView = useInView(projectsRef, { once: false, amount: 0.15 });
   const reduceMotion = useReducedMotion();
   const [showAllProjects, setShowAllProjects] = useState(false);
   const projectIcons = [Rocket, Code2, FolderKanban] as const;
   const visibleProjects = showAllProjects ? projects : projects.slice(0, 4);
   const shouldRevealProjects = projectsInView || showAllProjects;
+
+  useEffect(() => {
+    if (reduceMotion || !projectsBadgeRef.current) return;
+
+    const animation = anime({
+      targets: projectsBadgeRef.current,
+      scale: [1, 1.06],
+      duration: 1700,
+      easing: "easeInOutSine",
+      direction: "alternate",
+      loop: true,
+    });
+
+    return () => animation.pause();
+  }, [reduceMotion]);
+
+  useEffect(() => {
+    if (!showAllProjects || reduceMotion || !projectsRef.current) return;
+    const extraCards = projectsRef.current.querySelectorAll(
+      "[data-project-level='extra']"
+    );
+    if (!extraCards.length) return;
+
+    anime.remove(extraCards);
+    anime({
+      targets: extraCards,
+      opacity: [0.2, 1],
+      translateY: [24, 0],
+      scale: [0.97, 1],
+      delay: anime.stagger(80),
+      duration: 620,
+      easing: "easeOutExpo",
+    });
+  }, [showAllProjects, reduceMotion]);
 
   const handleToggleProjects = () => {
     if (showAllProjects) {
@@ -689,7 +830,10 @@ function ProjectsShowcase({
               Selected projects from study and real-world building
             </h3>
           </div>
-          <span className="rounded-full border border-border/70 bg-background/75 px-3 py-1 text-xs font-medium text-foreground/80">
+          <span
+            ref={projectsBadgeRef}
+            className="rounded-full border border-border/70 bg-background/75 px-3 py-1 text-xs font-medium text-foreground/80"
+          >
             {projects.length} Projects
           </span>
         </div>
@@ -727,6 +871,7 @@ function ProjectsShowcase({
                       }
                 }
                 className="group rounded-2xl border border-border/70 bg-background/80 p-4 backdrop-blur transition-colors hover:border-primary/45 md:p-5"
+                data-project-level={showAllProjects && index >= 4 ? "extra" : "base"}
               >
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -932,10 +1077,27 @@ function ContactCollaborationGrid({
   cv: ContactCv;
 }) {
   const contactRef = useRef<HTMLDivElement | null>(null);
+  const openToWorkRef = useRef<HTMLSpanElement | null>(null);
   const contactInView = useInView(contactRef, { once: false, amount: 0.25 });
   const reduceMotion = useReducedMotion();
   const [emailCopied, setEmailCopied] = useState(false);
   const primaryEmail = contactInfo.find((item) => item.label === "Email");
+
+  useEffect(() => {
+    if (reduceMotion || !openToWorkRef.current) return;
+
+    const animation = anime({
+      targets: openToWorkRef.current,
+      translateY: [0, -2.5],
+      scale: [1, 1.03],
+      duration: 1800,
+      easing: "easeInOutSine",
+      direction: "alternate",
+      loop: true,
+    });
+
+    return () => animation.pause();
+  }, [reduceMotion]);
 
   const handleCopyEmail = async (value: string) => {
     try {
@@ -993,7 +1155,10 @@ function ContactCollaborationGrid({
               Available for software roles and freelance projects
             </h3>
           </div>
-          <span className="rounded-full border border-emerald-300/60 bg-emerald-100/70 px-3 py-1 text-xs font-medium text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-500/15 dark:text-emerald-100">
+          <span
+            ref={openToWorkRef}
+            className="rounded-full border border-emerald-300/60 bg-emerald-100/70 px-3 py-1 text-xs font-medium text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-500/15 dark:text-emerald-100"
+          >
             Open To Work
           </span>
         </div>
