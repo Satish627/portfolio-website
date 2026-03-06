@@ -178,7 +178,7 @@ export function ContactCollaborationGrid({
                   required
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Jane Doe"
+                  placeholder="Shakti Maan"
                 />
               </label>
 
@@ -191,7 +191,7 @@ export function ContactCollaborationGrid({
                   required
                   value={senderEmail}
                   onChange={(event) => setSenderEmail(event.target.value)}
-                  placeholder="jane@email.com"
+                  placeholder="shakti@email.com"
                 />
               </label>
 
