@@ -2,11 +2,10 @@ export const homeSection = {
   id: "home",
   badge: "Satish | Developer Portfolio",
   headline:
-    "Student Developer building modern, high-performance web applications and experimental digital systems.",
+    "Student Developer building modern, high-performance web applications.",
   paragraphs: [
-    "I focus on building clean, scalable software with strong attention to user experience and system architecture. My work often combines modern frontend technologies with research-driven ideas, exploring how technology can improve interaction, performance, and usability.",
-    "I enjoy solving complex problems and turning them into simple, elegant interfaces.",
-    "Explore my projects to see how I design and build real applications, or get in touch if you would like to collaborate.",
+    "I build responsive and scalable web applications with a strong focus on clean code, performance, and user experience.",
+    "My work focuses on modern frontend development using technologies like Next.js, TypeScript, and Tailwind while understanding the full stack behind the scenes.",
   ],
   ctas: [
     {

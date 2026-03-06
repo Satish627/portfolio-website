@@ -956,7 +956,7 @@ function ContactCollaborationGrid({
       transition={{ duration: 0.48, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <motion.div
-        className="pointer-events-none absolute -left-10 -top-8 h-44 w-44 rounded-full bg-cyan-400/25 blur-3xl dark:bg-cyan-500/30"
+        className="pointer-events-none absolute -left-10 -top-8 h-44 w-44 rounded-full bg-slate-300/25 blur-3xl dark:bg-slate-500/25"
         animate={
           reduceMotion || !contactInView
             ? { opacity: 0.6, scale: 1 }
@@ -969,7 +969,7 @@ function ContactCollaborationGrid({
         }
       />
       <motion.div
-        className="pointer-events-none absolute -bottom-10 right-2 h-40 w-40 rounded-full bg-emerald-400/20 blur-3xl dark:bg-blue-500/25"
+        className="pointer-events-none absolute -bottom-10 right-2 h-40 w-40 rounded-full bg-zinc-300/20 blur-3xl dark:bg-zinc-500/25"
         animate={
           reduceMotion || !contactInView
             ? { opacity: 0.5, scale: 1 }
@@ -993,7 +993,7 @@ function ContactCollaborationGrid({
               Available for software roles and freelance projects
             </h3>
           </div>
-          <span className="rounded-full border border-cyan-300/60 bg-cyan-100/70 px-3 py-1 text-xs font-medium text-cyan-900 dark:border-cyan-300/30 dark:bg-cyan-500/15 dark:text-cyan-100">
+          <span className="rounded-full border border-emerald-300/60 bg-emerald-100/70 px-3 py-1 text-xs font-medium text-emerald-900 dark:border-emerald-300/30 dark:bg-emerald-500/15 dark:text-emerald-100">
             Open To Work
           </span>
         </div>
@@ -1023,7 +1023,7 @@ function ContactCollaborationGrid({
                           transition: { type: "spring", stiffness: 220, damping: 20 },
                         }
                   }
-                  className="group rounded-2xl border border-border/70 bg-background/75 p-3.5 backdrop-blur transition-colors hover:border-cyan-400/50 dark:hover:border-cyan-300/45"
+                  className="group rounded-2xl border border-border/70 bg-background/75 p-3.5 backdrop-blur transition-colors hover:border-primary/45"
                 >
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                     {item.label}
@@ -1062,7 +1062,7 @@ function ContactCollaborationGrid({
           </div>
 
           <motion.aside
-            className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-slate-100/85 via-background to-cyan-100/50 p-5 shadow-sm dark:from-slate-900 dark:via-zinc-950 dark:to-cyan-950/55"
+            className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-slate-100/85 via-background to-zinc-100/60 p-5 shadow-sm dark:from-slate-900 dark:via-zinc-950 dark:to-slate-900"
             initial={{ opacity: 0, x: 16 }}
             animate={contactInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 16 }}
             transition={{ duration: 0.48, delay: 0.08, ease: [0.2, 0.8, 0.2, 1] }}
@@ -1076,7 +1076,7 @@ function ContactCollaborationGrid({
             }
           >
             <motion.div
-              className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-400/25 blur-2xl dark:bg-cyan-400/30"
+              className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-slate-400/20 blur-2xl dark:bg-zinc-400/25"
               animate={
                 reduceMotion
                   ? { opacity: 0.55, scale: 1 }
@@ -1143,6 +1143,7 @@ function HeroImageCard({ inView }: { inView: boolean }) {
   const reduceMotion = useReducedMotion();
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
+  const [spinTurns, setSpinTurns] = useState(0);
 
   const rotateX = useSpring(
     useTransform(pointerY, [-130, 130], [18, -18]),
@@ -1168,6 +1169,11 @@ function HeroImageCard({ inView }: { inView: boolean }) {
   const handleMouseLeave = () => {
     pointerX.set(0);
     pointerY.set(0);
+  };
+
+  const handleSpinClick = () => {
+    if (reduceMotion) return;
+    setSpinTurns((current) => current + 1);
   };
 
   return (
@@ -1225,72 +1231,23 @@ function HeroImageCard({ inView }: { inView: boolean }) {
         }
       >
         <motion.div
-          animate={
-            reduceMotion || !inView
-              ? { opacity: 1, scale: 1 }
-              : { opacity: [0.96, 1, 0.98, 1], scale: [0.99, 1, 1.01, 1] }
-          }
+          className="cursor-pointer"
+          onClick={handleSpinClick}
+          animate={reduceMotion ? { rotateZ: 0 } : { rotateZ: spinTurns * 360 }}
           transition={
             reduceMotion
               ? undefined
               : {
-                  duration: 3.6,
-                  ease: "easeInOut",
-                  repeat: Infinity,
+                  duration: 0.85,
+                  ease: [0.2, 0.85, 0.2, 1],
                 }
           }
-          className="relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xl"
-          style={{ transform: "translateZ(46px)" }}
         >
           <motion.div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-zinc-100 via-white to-zinc-200 dark:from-slate-900 dark:via-zinc-950 dark:to-slate-900"
             animate={
-              reduceMotion
-                ? { opacity: 1 }
-                : { opacity: [0.96, 1, 0.96] }
-            }
-            transition={
-              reduceMotion
-                ? undefined
-                : {
-                    duration: 4.2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }
-            }
-          />
-          <motion.div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(56,189,248,0.22),rgba(255,255,255,0)_48%)] dark:bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,0.24),rgba(0,0,0,0)_44%),radial-gradient(circle_at_80%_88%,rgba(59,130,246,0.2),rgba(0,0,0,0)_54%)]"
-            animate={
-              reduceMotion
-                ? { opacity: 0.6 }
-                : { opacity: [0.45, 0.78, 0.45] }
-            }
-            transition={
-              reduceMotion
-                ? undefined
-                : {
-                    duration: 3.8,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }
-            }
-          />
-          <Image
-            src="/hero.png"
-            alt="Portrait of Satish"
-            width={900}
-            height={1200}
-            priority
-            className="relative z-10 h-auto w-full object-cover saturate-[1.02] dark:brightness-110 dark:contrast-110 dark:saturate-110"
-            sizes="(min-width: 768px) 300px, 250px"
-          />
-          <motion.div
-            className="pointer-events-none absolute inset-0 z-20 hidden bg-gradient-to-t from-black/28 via-transparent to-cyan-300/8 dark:block"
-            animate={
-              reduceMotion
-                ? { opacity: 0.55 }
-                : { opacity: [0.38, 0.62, 0.38] }
+              reduceMotion || !inView
+                ? { opacity: 1, scale: 1 }
+                : { opacity: [0.96, 1, 0.98, 1], scale: [0.99, 1, 1.01, 1] }
             }
             transition={
               reduceMotion
@@ -1301,21 +1258,84 @@ function HeroImageCard({ inView }: { inView: boolean }) {
                     ease: "easeInOut",
                   }
             }
-          />
-          <motion.div
-            className="pointer-events-none absolute inset-0 z-30 mix-blend-screen"
-            style={{ background: glare }}
-            animate={reduceMotion ? { opacity: 0 } : { opacity: [0.2, 0.5, 0.2] }}
-            transition={
-              reduceMotion
-                ? undefined
-                : {
-                    duration: 2.2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }
-            }
-          />
+            className="relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xl"
+            style={{ transform: "translateZ(46px)" }}
+          >
+            <motion.div
+              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-zinc-100 via-white to-zinc-200 dark:from-slate-900 dark:via-zinc-950 dark:to-slate-900"
+              animate={
+                reduceMotion
+                  ? { opacity: 1 }
+                  : { opacity: [0.96, 1, 0.96] }
+              }
+              transition={
+                reduceMotion
+                  ? undefined
+                  : {
+                      duration: 4.2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }
+              }
+            />
+            <motion.div
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(56,189,248,0.22),rgba(255,255,255,0)_48%)] dark:bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,0.24),rgba(0,0,0,0)_44%),radial-gradient(circle_at_80%_88%,rgba(59,130,246,0.2),rgba(0,0,0,0)_54%)]"
+              animate={
+                reduceMotion
+                  ? { opacity: 0.6 }
+                  : { opacity: [0.45, 0.78, 0.45] }
+              }
+              transition={
+                reduceMotion
+                  ? undefined
+                  : {
+                      duration: 3.8,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }
+              }
+            />
+            <Image
+              src="/hero.png"
+              alt="Portrait of Satish"
+              width={900}
+              height={1200}
+              priority
+              className="relative z-10 h-auto w-full object-cover saturate-[1.02] dark:brightness-110 dark:contrast-110 dark:saturate-110"
+              sizes="(min-width: 768px) 300px, 250px"
+            />
+            <motion.div
+              className="pointer-events-none absolute inset-0 z-20 hidden bg-gradient-to-t from-black/28 via-transparent to-cyan-300/8 dark:block"
+              animate={
+                reduceMotion
+                  ? { opacity: 0.55 }
+                  : { opacity: [0.38, 0.62, 0.38] }
+              }
+              transition={
+                reduceMotion
+                  ? undefined
+                  : {
+                      duration: 3.6,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }
+              }
+            />
+            <motion.div
+              className="pointer-events-none absolute inset-0 z-30 mix-blend-screen"
+              style={{ background: glare }}
+              animate={reduceMotion ? { opacity: 0 } : { opacity: [0.2, 0.5, 0.2] }}
+              transition={
+                reduceMotion
+                  ? undefined
+                  : {
+                      duration: 2.2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }
+              }
+            />
+          </motion.div>
         </motion.div>
       </motion.div>
     </motion.div>

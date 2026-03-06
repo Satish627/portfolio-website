@@ -30,7 +30,7 @@ export function AnimatedBackground() {
       detectRetina: true,
       particles: {
         number: {
-          value: 120,
+          value: isDark ? 115 : 95,
           density: {
             enable: true,
             width: 1280,
@@ -38,22 +38,27 @@ export function AnimatedBackground() {
           },
         },
         color: {
-          value: isDark ? "#e2e8f0" : "#334155",
+          value: isDark ? ["#f8fafc", "#fbbf24", "#fb923c"] : "#334155",
         },
         opacity: {
-          value: { min: isDark ? 0.2 : 0.1, max: isDark ? 0.9 : 0.45 },
+          value: { min: isDark ? 0.35 : 0.1, max: isDark ? 1 : 0.45 },
           animation: {
             enable: true,
-            speed: 0.8,
+            speed: isDark ? 1 : 0.8,
             sync: false,
           },
         },
         size: {
-          value: { min: 1, max: 3.2 },
+          value: { min: isDark ? 1.4 : 1, max: isDark ? 3.8 : 3.2 },
+          animation: {
+            enable: true,
+            speed: 2.2,
+            sync: false,
+          },
         },
         move: {
           enable: true,
-          speed: 0.35,
+          speed: 0.5,
           direction: "none",
           outModes: {
             default: "out",
@@ -62,12 +67,37 @@ export function AnimatedBackground() {
         shape: {
           type: "circle",
         },
+        links: {
+          enable: true,
+          distance: isDark ? 118 : 100,
+          opacity: isDark ? 0.16 : 0.12,
+          color: isDark ? "#f59e0b" : "#0f172a",
+          width: isDark ? 1.15 : 1,
+        },
       },
       interactivity: {
+        detectsOn: "window",
         events: {
-          onHover: { enable: false, mode: [] },
-          onClick: { enable: false, mode: [] },
+          onHover: { enable: true, mode: ["grab", "bubble"] },
+          onClick: { enable: true, mode: ["push"] },
           resize: { enable: true },
+        },
+        modes: {
+          grab: {
+            distance: isDark ? 205 : 170,
+            links: {
+              opacity: isDark ? 0.58 : 0.3,
+            },
+          },
+          bubble: {
+            distance: isDark ? 165 : 125,
+            size: isDark ? 6.4 : 4.6,
+            duration: 1.5,
+            opacity: isDark ? 1 : 0.75,
+          },
+          push: {
+            quantity: isDark ? 3 : 2,
+          },
         },
       },
     }),
@@ -79,7 +109,7 @@ export function AnimatedBackground() {
   return (
     <Particles
       id="stars-background"
-      className="pointer-events-none"
+      className="pointer-events-none opacity-95 dark:opacity-100"
       options={options}
     />
   );
