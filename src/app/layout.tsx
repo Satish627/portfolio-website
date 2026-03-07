@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fontSans.variable} ${fontMono.variable} antialiased`}
+        className={`${fontSans.variable} ${fontMono.variable} overflow-x-hidden antialiased`}
       >
         <ThemeProvider
           attribute="class"

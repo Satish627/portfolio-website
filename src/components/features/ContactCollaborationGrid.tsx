@@ -167,7 +167,16 @@ export function ContactCollaborationGrid({
             initial={{ opacity: 0, x: -16 }}
             animate={contactInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -16 }}
             transition={{ duration: 0.42, ease: [0.2, 0.8, 0.2, 1] }}
-            className="rounded-2xl border border-border/70 bg-background/75 p-4 backdrop-blur md:p-5"
+            whileHover={
+              reduceMotion
+                ? undefined
+                : {
+                    y: -5,
+                    scale: 1.01,
+                    transition: { type: "spring", stiffness: 230, damping: 20 },
+                  }
+            }
+            className="rounded-2xl border border-border/70 bg-background/75 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_46px_-32px_rgba(0,0,0,0.68)] md:p-5"
           >
             <div className="grid gap-3">
               <label className="grid gap-1.5">
@@ -233,10 +242,19 @@ export function ContactCollaborationGrid({
           </motion.form>
 
           <motion.aside
-            className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-slate-100/85 via-background to-zinc-100/60 p-5 shadow-sm dark:from-slate-900 dark:via-zinc-950 dark:to-slate-900"
+            className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-slate-100/85 via-background to-zinc-100/60 p-5 shadow-sm transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_46px_-32px_rgba(0,0,0,0.68)] dark:from-slate-900 dark:via-zinc-950 dark:to-slate-900"
             initial={{ opacity: 0, x: 16 }}
             animate={contactInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 16 }}
             transition={{ duration: 0.48, delay: 0.08, ease: [0.2, 0.8, 0.2, 1] }}
+            whileHover={
+              reduceMotion
+                ? undefined
+                : {
+                    y: -5,
+                    scale: 1.01,
+                    transition: { type: "spring", stiffness: 230, damping: 20 },
+                  }
+            }
           >
             <motion.div
               className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-slate-400/20 blur-2xl dark:bg-zinc-400/25"

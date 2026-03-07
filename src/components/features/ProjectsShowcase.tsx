@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import anime from "animejs";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useAnimationControls,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 import {
   ArrowUpRight,
   ChevronDown,
@@ -14,6 +19,41 @@ import {
 import { Button } from "@/src/components/ui/button";
 import type { ProjectItem } from "@/src/components/portfolio/types";
 
+function RepeatingTextReveal({
+  children,
+  delay,
+  reduceMotion,
+}: {
+  children: ReactNode;
+  delay: number;
+  reduceMotion: boolean | null;
+}) {
+  const controls = useAnimationControls();
+  const hiddenY = reduceMotion ? 0 : 12;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: hiddenY }}
+      animate={controls}
+      viewport={{ amount: 0.08, once: false, margin: "0px 0px -6% 0px" }}
+      onViewportEnter={() => {
+        controls.set({ opacity: 0, y: hiddenY });
+        void controls.start({
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.4,
+            delay,
+            ease: [0.2, 0.8, 0.2, 1],
+          },
+        });
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export function ProjectsShowcase({
   projects,
 }: {
@@ -21,7 +61,7 @@ export function ProjectsShowcase({
 }) {
   const projectsRef = useRef<HTMLDivElement | null>(null);
   const projectsBadgeRef = useRef<HTMLSpanElement | null>(null);
-  const projectsInView = useInView(projectsRef, { once: false, amount: 0.15 });
+  const projectsInView = useInView(projectsRef, { once: true, amount: 0.05 });
   const reduceMotion = useReducedMotion();
   const [showAllProjects, setShowAllProjects] = useState(false);
   const projectIcons = [Rocket, Code2, FolderKanban] as const;
@@ -129,9 +169,13 @@ export function ProjectsShowcase({
         }
       />
 
-      <div className="relative rounded-3xl border border-border/70 bg-gradient-to-b from-background/80 via-card/90 to-card/75 p-5 shadow-[0_22px_55px_-42px_rgba(0,0,0,0.7)] backdrop-blur-xl md:p-6">
+      <div className="relative rounded-3xl border border-border/70 bg-linear-to-b from-background/95 via-card/98 to-card/90 p-5 shadow-[0_22px_55px_-42px_rgba(0,0,0,0.7)] backdrop-blur-xl md:p-6">
         <div className="mb-5 flex items-center justify-between gap-3">
-          <div>
+          <motion.div
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+            animate={shouldRevealProjects ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.42, ease: [0.2, 0.8, 0.2, 1] }}
+          >
             <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               <FolderKanban className="h-3.5 w-3.5" />
               Featured Work
@@ -139,13 +183,16 @@ export function ProjectsShowcase({
             <h3 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
               Selected projects from study and real-world building
             </h3>
-          </div>
-          <span
+          </motion.div>
+          <motion.span
             ref={projectsBadgeRef}
             className="rounded-full border border-border/70 bg-background/75 px-3 py-1 text-xs font-medium text-foreground/80"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            animate={shouldRevealProjects ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            transition={{ duration: 0.38, delay: 0.08, ease: [0.2, 0.8, 0.2, 1] }}
           >
             {projects.length} Projects
-          </span>
+          </motion.span>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -157,17 +204,12 @@ export function ProjectsShowcase({
                 initial={
                   reduceMotion
                     ? { opacity: 0 }
-                    : { opacity: 0, y: 18, scale: 0.98, filter: "blur(8px)" }
+                    : { opacity: 0, y: 34, scale: 0.94, filter: "blur(10px)" }
                 }
-                animate={
-                  shouldRevealProjects
-                    ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
-                    : reduceMotion
-                      ? { opacity: 0 }
-                      : { opacity: 0, y: 18, scale: 0.98, filter: "blur(8px)" }
-                }
+                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                viewport={{ amount: 0.45, once: false, margin: "0px 0px -12% 0px" }}
                 transition={{
-                  duration: 0.5,
+                  duration: 0.62,
                   delay: index * 0.08,
                   ease: [0.2, 0.8, 0.2, 1],
                 }}
@@ -175,56 +217,58 @@ export function ProjectsShowcase({
                   reduceMotion
                     ? undefined
                     : {
-                        y: -3,
-                        scale: 1.01,
-                        transition: { type: "spring", stiffness: 220, damping: 20 },
+                        y: -6,
+                        scale: 1.02,
+                        transition: { type: "spring", stiffness: 230, damping: 18 },
                       }
                 }
-                className="group rounded-2xl border border-border/70 bg-background/80 p-4 backdrop-blur transition-colors hover:border-primary/45 md:p-5"
+                className="group rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_48px_-28px_rgba(0,0,0,0.7)] md:p-5"
                 data-project-level={showAllProjects && index >= 4 ? "extra" : "base"}
               >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                    {project.category}
-                  </p>
-                  <Icon className="h-4 w-4 text-primary/85 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </div>
-                <h4 className="mt-2 text-lg font-semibold tracking-tight">
-                  {project.title}
-                </h4>
-                <p className="mt-2 text-sm text-muted-foreground">{project.summary}</p>
-                <p className="mt-3 rounded-xl border border-border/70 bg-card/75 px-3 py-2 text-sm text-foreground/90">
-                  {project.highlight}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {project.stack.map((tech) => (
-                    <span
-                      key={`${project.title}-${tech}`}
-                      className="rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs font-medium text-foreground/85"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-                {project.links?.length ? (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {project.links.map((link) => {
-                      const isExternal = link.href.startsWith("http");
-                      return (
-                        <a
-                          key={`${project.title}-${link.href}`}
-                          href={link.href}
-                          target={isExternal ? "_blank" : undefined}
-                          rel={isExternal ? "noreferrer" : undefined}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary/45 hover:text-primary"
-                        >
-                          {link.label}
-                          <ArrowUpRight className="h-3 w-3" />
-                        </a>
-                      );
-                    })}
+                <RepeatingTextReveal delay={0.08 + index * 0.05} reduceMotion={reduceMotion}>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      {project.category}
+                    </p>
+                    <Icon className="h-4 w-4 text-primary/85 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </div>
-                ) : null}
+                  <h4 className="mt-2 text-lg font-semibold tracking-tight">
+                    {project.title}
+                  </h4>
+                  <p className="mt-2 text-sm text-muted-foreground">{project.summary}</p>
+                  <p className="mt-3 rounded-xl border border-border/70 bg-card/75 px-3 py-2 text-sm text-foreground/90">
+                    {project.highlight}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {project.stack.map((tech) => (
+                      <span
+                        key={`${project.title}-${tech}`}
+                        className="rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs font-medium text-foreground/85"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  {project.links?.length ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {project.links.map((link) => {
+                        const isExternal = link.href.startsWith("http");
+                        return (
+                          <a
+                            key={`${project.title}-${link.href}`}
+                            href={link.href}
+                            target={isExternal ? "_blank" : undefined}
+                            rel={isExternal ? "noreferrer" : undefined}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary/45 hover:text-primary"
+                          >
+                            {link.label}
+                            <ArrowUpRight className="h-3 w-3" />
+                          </a>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                </RepeatingTextReveal>
               </motion.article>
             );
           })}
@@ -234,7 +278,10 @@ export function ProjectsShowcase({
             <Button
               type="button"
               variant="outline"
-              onClick={handleToggleProjects}
+              onClick={(event) => {
+                event.preventDefault();
+                handleToggleProjects();
+              }}
               className="min-w-48"
             >
               {showAllProjects ? "Show fewer projects" : "Show more projects"}

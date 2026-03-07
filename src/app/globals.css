@@ -144,6 +144,8 @@
 
   html {
     scroll-behavior: smooth;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .section-anchor:target .section-content {
@@ -161,5 +163,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 }

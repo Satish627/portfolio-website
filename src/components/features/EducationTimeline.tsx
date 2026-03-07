@@ -1,11 +1,54 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, type ReactNode } from "react";
 import Image from "next/image";
 import anime from "animejs";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useAnimationControls,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 import { ExternalLink, GraduationCap } from "lucide-react";
 import type { EducationMilestone } from "@/src/components/portfolio/types";
+
+function RepeatingTextReveal({
+  children,
+  delay,
+  reduceMotion,
+  className,
+}: {
+  children: ReactNode;
+  delay: number;
+  reduceMotion: boolean | null;
+  className?: string;
+}) {
+  const controls = useAnimationControls();
+  const hiddenY = reduceMotion ? 0 : 12;
+
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: hiddenY }}
+      animate={controls}
+      viewport={{ amount: 0.08, once: false, margin: "0px 0px -6% 0px" }}
+      onViewportEnter={() => {
+        controls.set({ opacity: 0, y: hiddenY });
+        void controls.start({
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.42,
+            delay,
+            ease: [0.2, 0.8, 0.2, 1],
+          },
+        });
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export function EducationTimeline({
   milestones,
@@ -162,12 +205,12 @@ export function EducationTimeline({
                     reduceMotion
                       ? undefined
                       : {
-                          y: -4,
-                          scale: 1.01,
-                          transition: { type: "spring", stiffness: 200, damping: 18 },
+                          y: -6,
+                          scale: 1.02,
+                          transition: { type: "spring", stiffness: 220, damping: 18 },
                         }
                   }
-                  className="group relative block rounded-2xl border border-border/75 bg-background/90 p-4 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.5)] backdrop-blur-md transition-colors hover:border-primary/45 md:p-5"
+                  className="group relative block rounded-2xl border border-border/75 bg-background/90 p-4 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.5)] backdrop-blur-md transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_26px_56px_-30px_rgba(0,0,0,0.65)] md:p-5"
                 >
                   <motion.span
                     className="absolute -left-[29px] top-7 h-3 w-3 rounded-full border-2 border-background bg-primary"
@@ -184,7 +227,11 @@ export function EducationTimeline({
                     }}
                   />
 
-                  <div className="flex flex-wrap items-start gap-4">
+                  <RepeatingTextReveal
+                    className="flex flex-wrap items-start gap-4"
+                    delay={0.1 + index * 0.06}
+                    reduceMotion={reduceMotion}
+                  >
                     {milestone.logo ? (
                       <div
                         data-education-logo
@@ -263,7 +310,7 @@ export function EducationTimeline({
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </RepeatingTextReveal>
                 </motion.a>
               );
             })}

@@ -7,12 +7,15 @@ import type { PortfolioSection } from "@/src/components/portfolio/types";
 import { ContactCollaborationGrid } from "@/src/components/features/ContactCollaborationGrid";
 import { EducationTimeline } from "@/src/components/features/EducationTimeline";
 import { ExperienceTimeline } from "@/src/components/features/ExperienceTimeline";
-import { HorizontalStoryStepper } from "@/src/components/features/HorizontalStoryStepper";
 import { ProjectsShowcase } from "@/src/components/features/ProjectsShowcase";
+import { VerticalStoryTimeline } from "@/src/components/features/VerticalStoryTimeline";
 
 export function RevealSection({ section }: { section: PortfolioSection }) {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const sectionInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const sectionInView = useInView(sectionRef, {
+    once: false,
+    amount: 0.2,
+  });
 
   return (
     <motion.section
@@ -57,7 +60,7 @@ export function RevealSection({ section }: { section: PortfolioSection }) {
           </motion.p>
         ))}
 
-        {section.storySteps ? <HorizontalStoryStepper steps={section.storySteps} /> : null}
+        {section.storySteps ? <VerticalStoryTimeline steps={section.storySteps} /> : null}
         {section.milestones ? <EducationTimeline milestones={section.milestones} /> : null}
         {section.experienceItems ? <ExperienceTimeline items={section.experienceItems} /> : null}
         {section.featuredProjects ? <ProjectsShowcase projects={section.featuredProjects} /> : null}

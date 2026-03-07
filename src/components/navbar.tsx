@@ -10,9 +10,12 @@ import {
   GraduationCap,
   House,
   Mail,
+  Menu,
   type LucideIcon,
   UserRound,
 } from "lucide-react";
+import { Button } from "@/src/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
 import { cn } from "@/src/lib/utils";
 import { ThemeToggle } from "@/src/components/theme-toggle";
 
@@ -159,6 +162,7 @@ export function Navbar({
   const pathname = usePathname();
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>(defaultActive);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (pathname !== "/") return;
@@ -192,6 +196,16 @@ export function Navbar({
       }
 
       setActiveTab(current);
+
+      const currentItem = items.find(
+        (item) => item.name === current && item.url.startsWith("/#")
+      );
+      if (currentItem) {
+        const hash = currentItem.url.replace("/", "");
+        if (window.location.hash !== hash) {
+          window.history.replaceState(null, "", currentItem.url);
+        }
+      }
     };
 
     let frameId = window.requestAnimationFrame(updateFromHashOrScroll);
@@ -215,9 +229,92 @@ export function Navbar({
     };
   }, [defaultActive, items, pathname]);
 
+  const handleNavItemClick = (
+    item: NavItem,
+    event?: React.MouseEvent<HTMLAnchorElement>
+  ) => {
+    setActiveTab(item.name);
+    setIsMobileMenuOpen(false);
+
+    if (!item.url.startsWith("/#")) return;
+
+    if (pathname !== "/") {
+      window.location.assign(item.url);
+      return;
+    }
+
+    event?.preventDefault();
+    const targetId = item.url.replace("/#", "");
+
+    const scrollToTarget = () => {
+      const target = document.getElementById(targetId);
+      if (!target) return false;
+
+      const targetTop =
+        target.getBoundingClientRect().top + window.scrollY - NAV_SCROLL_OFFSET;
+      window.history.replaceState(null, "", item.url);
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+      return true;
+    };
+
+    window.requestAnimationFrame(() => {
+      if (scrollToTarget()) return;
+      window.requestAnimationFrame(() => {
+        scrollToTarget();
+      });
+    });
+  };
+
   return (
     <div className={cn("fixed left-0 right-0 top-6 z-[9999] px-4", className)}>
-      <div className="flex justify-center pt-6">
+      <div className="flex items-center justify-between pt-6 md:hidden">
+        <div className="[&_button]:h-10 [&_button]:w-10 [&_button]:rounded-full [&_button]:border-border/60 [&_button]:bg-background/70 dark:[&_button]:border-white/20 dark:[&_button]:bg-black/60">
+          <ThemeToggle />
+        </div>
+
+        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Open navigation menu"
+              className="rounded-full border-border/60 bg-background/75 shadow-lg backdrop-blur-xl dark:border-white/20 dark:bg-black/60"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent
+            side="top"
+            className="border-b border-border/70 bg-background/95 px-4 pb-4 pt-14 backdrop-blur-xl"
+          >
+            <nav className="grid gap-2">
+              {items.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.name;
+
+                return (
+                  <Link
+                    key={`mobile-${item.name}`}
+                    href={item.url}
+                    onClick={(event) => handleNavItemClick(item, event)}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-colors",
+                      isActive
+                        ? "border-primary/45 bg-primary/10 text-foreground"
+                        : "border-border/70 bg-card/70 text-foreground/85 hover:border-primary/35 hover:text-foreground"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      <div className="hidden justify-center pt-6 md:flex">
         <motion.div
           className="relative flex items-center gap-2 rounded-full border border-border/60 bg-background/65 px-2 py-2 shadow-lg backdrop-blur-xl dark:border-white/15 dark:bg-black/55"
           initial={{ y: -20, opacity: 0 }}
@@ -233,20 +330,7 @@ export function Navbar({
               <Link
                 key={item.name}
                 href={item.url}
-                onClick={(event) => {
-                  setActiveTab(item.name);
-                  if (pathname !== "/" || !item.url.startsWith("/#")) return;
-
-                  event.preventDefault();
-                  const targetId = item.url.replace("/#", "");
-                  const target = document.getElementById(targetId);
-                  if (!target) return;
-
-                  const targetTop =
-                    target.getBoundingClientRect().top + window.scrollY - NAV_SCROLL_OFFSET;
-                  window.history.replaceState(null, "", item.url);
-                  window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
-                }}
+                onClick={(event) => handleNavItemClick(item, event)}
                 onMouseEnter={() => setHoveredTab(item.name)}
                 onMouseLeave={() => setHoveredTab(null)}
                 className={cn(

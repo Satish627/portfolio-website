@@ -1,9 +1,49 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useRef, type ReactNode } from "react";
+import {
+  motion,
+  useAnimationControls,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 import { BriefcaseBusiness } from "lucide-react";
 import type { ExperienceItem } from "@/src/components/portfolio/types";
+
+function RepeatingTextReveal({
+  children,
+  delay,
+  reduceMotion,
+}: {
+  children: ReactNode;
+  delay: number;
+  reduceMotion: boolean | null;
+}) {
+  const controls = useAnimationControls();
+  const hiddenY = reduceMotion ? 0 : 12;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: hiddenY }}
+      animate={controls}
+      viewport={{ amount: 0.08, once: false, margin: "0px 0px -6% 0px" }}
+      onViewportEnter={() => {
+        controls.set({ opacity: 0, y: hiddenY });
+        void controls.start({
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.4,
+            delay,
+            ease: [0.2, 0.8, 0.2, 1],
+          },
+        });
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export function ExperienceTimeline({
   items,
@@ -36,9 +76,13 @@ export function ExperienceTimeline({
         }
       />
 
-      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-b from-background/80 via-card/90 to-card/75 p-5 shadow-[0_22px_55px_-42px_rgba(0,0,0,0.7)] backdrop-blur-xl md:p-6">
+      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-linear-to-b from-background/95 via-card/98 to-card/90 p-5 shadow-[0_22px_55px_-42px_rgba(0,0,0,0.7)] backdrop-blur-xl md:p-6">
         <div className="mb-5 flex items-center justify-between gap-3">
-          <div>
+          <motion.div
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+            animate={experienceInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.42, ease: [0.2, 0.8, 0.2, 1] }}
+          >
             <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               <BriefcaseBusiness className="h-3.5 w-3.5" />
               Work Experience
@@ -46,10 +90,15 @@ export function ExperienceTimeline({
             <h3 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
               Professional roles and internship delivery
             </h3>
-          </div>
-          <span className="rounded-full border border-border/70 bg-background/75 px-3 py-1 text-xs font-medium text-foreground/80">
+          </motion.div>
+          <motion.span
+            className="rounded-full border border-border/70 bg-background/75 px-3 py-1 text-xs font-medium text-foreground/80"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            animate={experienceInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            transition={{ duration: 0.38, delay: 0.08, ease: [0.2, 0.8, 0.2, 1] }}
+          >
             {items.length} Roles
-          </span>
+          </motion.span>
         </div>
 
         <div className="relative pl-7">
@@ -68,17 +117,12 @@ export function ExperienceTimeline({
                 initial={
                   reduceMotion
                     ? { opacity: 0 }
-                    : { opacity: 0, x: 24, y: 16, filter: "blur(8px)" }
+                    : { opacity: 0, x: 36, y: 34, scale: 0.95, filter: "blur(10px)" }
                 }
-                animate={
-                  experienceInView
-                    ? { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
-                    : reduceMotion
-                      ? { opacity: 0 }
-                      : { opacity: 0, x: 24, y: 16, filter: "blur(8px)" }
-                }
+                whileInView={{ opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
+                viewport={{ amount: 0.45, once: false, margin: "0px 0px -12% 0px" }}
                 transition={{
-                  duration: 0.5,
+                  duration: 0.62,
                   delay: index * 0.08,
                   ease: [0.2, 0.8, 0.2, 1],
                 }}
@@ -86,40 +130,41 @@ export function ExperienceTimeline({
                   reduceMotion
                     ? undefined
                     : {
-                        y: -2,
-                        scale: 1.01,
-                        transition: { type: "spring", stiffness: 220, damping: 20 },
+                        y: -5,
+                        scale: 1.02,
+                        transition: { type: "spring", stiffness: 230, damping: 18 },
                       }
                 }
-                className="relative rounded-2xl border border-border/70 bg-background/80 p-4 backdrop-blur transition-colors hover:border-primary/45 md:p-5"
+                className="relative rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_46px_-30px_rgba(0,0,0,0.68)] md:p-5"
               >
                 <span className="absolute -left-8 top-7 h-3 w-3 rounded-full border-2 border-background bg-primary" />
+                <RepeatingTextReveal delay={0.08 + index * 0.05} reduceMotion={reduceMotion}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="rounded-full border border-border/70 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground/85">
+                      {item.type}
+                    </p>
+                    <p className="text-xs font-medium uppercase tracking-[0.11em] text-muted-foreground">
+                      {item.period}
+                    </p>
+                  </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="rounded-full border border-border/70 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground/85">
-                    {item.type}
+                  <h4 className="mt-2 text-lg font-semibold tracking-tight">{item.role}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {item.company} · {item.location}
                   </p>
-                  <p className="text-xs font-medium uppercase tracking-[0.11em] text-muted-foreground">
-                    {item.period}
-                  </p>
-                </div>
+                  <p className="mt-2 text-sm text-muted-foreground">{item.summary}</p>
 
-                <h4 className="mt-2 text-lg font-semibold tracking-tight">{item.role}</h4>
-                <p className="text-sm text-muted-foreground">
-                  {item.company} · {item.location}
-                </p>
-                <p className="mt-2 text-sm text-muted-foreground">{item.summary}</p>
-
-                <ul className="mt-3 grid gap-1.5">
-                  {item.highlights.map((highlight) => (
-                    <li
-                      key={`${item.company}-${highlight}`}
-                      className="text-sm text-foreground/90"
-                    >
-                      • {highlight}
-                    </li>
-                  ))}
-                </ul>
+                  <ul className="mt-3 grid gap-1.5">
+                    {item.highlights.map((highlight) => (
+                      <li
+                        key={`${item.company}-${highlight}`}
+                        className="text-sm text-foreground/90"
+                      >
+                        • {highlight}
+                      </li>
+                    ))}
+                  </ul>
+                </RepeatingTextReveal>
               </motion.article>
             ))}
           </div>
