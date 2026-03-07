@@ -33,6 +33,10 @@ function RepeatingTextReveal({
       animate={controls}
       viewport={{ amount: 0.08, once: false, margin: "0px 0px -6% 0px" }}
       onViewportEnter={() => {
+        if (reduceMotion) {
+          controls.set({ opacity: 1, y: 0 });
+          return;
+        }
         controls.set({ opacity: 0, y: hiddenY });
         void controls.start({
           opacity: 1,
@@ -124,10 +128,10 @@ export function EducationTimeline({
       transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <motion.div
-        className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-primary/12 blur-3xl"
+        className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full bg-primary/8 blur-2xl md:-right-20 md:-top-24 md:h-56 md:w-56 md:bg-primary/12 md:blur-3xl"
         animate={
           reduceMotion || !timelineInView
-            ? { opacity: 0.45, scale: 1 }
+            ? { opacity: 0.32, scale: 1 }
             : { opacity: [0.35, 0.8, 0.35], scale: [0.98, 1.06, 0.98] }
         }
         transition={
@@ -179,9 +183,9 @@ export function EducationTimeline({
                       ? { opacity: 0 }
                       : {
                           opacity: 0,
-                          x: index % 2 === 0 ? -26 : 26,
-                          y: 20,
-                          filter: "blur(8px)",
+                          x: index % 2 === 0 ? -22 : 22,
+                          y: 18,
+                          filter: "blur(5px)",
                         }
                   }
                   animate={
@@ -191,9 +195,9 @@ export function EducationTimeline({
                         ? { opacity: 0 }
                         : {
                             opacity: 0,
-                            x: index % 2 === 0 ? -26 : 26,
-                            y: 20,
-                            filter: "blur(8px)",
+                            x: index % 2 === 0 ? -22 : 22,
+                            y: 18,
+                            filter: "blur(5px)",
                           }
                   }
                   transition={{
@@ -210,7 +214,7 @@ export function EducationTimeline({
                           transition: { type: "spring", stiffness: 220, damping: 18 },
                         }
                   }
-                  className="group relative block rounded-2xl border border-border/75 bg-background/90 p-4 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.5)] backdrop-blur-md transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_26px_56px_-30px_rgba(0,0,0,0.65)] md:p-5"
+                  className="group relative block min-w-0 rounded-2xl border border-border/75 bg-background/90 p-4 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.5)] backdrop-blur-md transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_26px_56px_-30px_rgba(0,0,0,0.65)] md:p-5"
                 >
                   <motion.span
                     className="absolute -left-[29px] top-7 h-3 w-3 rounded-full border-2 border-background bg-primary"
@@ -254,7 +258,7 @@ export function EducationTimeline({
                         <span>{milestone.status}</span>
                       </div>
                       <div className="relative mt-2 inline-flex items-center gap-2">
-                        <h3 className="text-lg font-semibold tracking-tight md:text-xl">
+                        <h3 className="break-words text-lg font-semibold tracking-tight md:text-xl">
                           {milestone.institution}
                         </h3>
                         <ExternalLink className="h-4 w-4 text-primary/80 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -293,17 +297,17 @@ export function EducationTimeline({
                           </div>
                         </motion.div>
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="break-words text-sm text-muted-foreground">
                         {milestone.program} · {milestone.location}
                       </p>
-                      <p className="mt-3 text-sm text-muted-foreground md:text-base">
+                      <p className="mt-3 break-words text-sm text-muted-foreground md:text-base">
                         {milestone.summary}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {milestone.focus.map((focusItem) => (
                           <span
                             key={`${milestone.institution}-${focusItem}`}
-                            className="rounded-full border border-border/70 bg-card px-2.5 py-1 text-xs font-medium text-foreground/85"
+                            className="max-w-full break-all rounded-full border border-border/70 bg-card px-2.5 py-1 text-xs font-medium text-foreground/85"
                           >
                             {focusItem}
                           </span>

@@ -116,10 +116,10 @@ export function ContactCollaborationGrid({
       transition={{ duration: 0.48, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <motion.div
-        className="pointer-events-none absolute -left-10 -top-8 h-44 w-44 rounded-full bg-slate-300/25 blur-3xl dark:bg-slate-500/25"
+        className="pointer-events-none absolute -left-6 -top-6 h-28 w-28 rounded-full bg-slate-300/18 blur-2xl md:-left-10 md:-top-8 md:h-44 md:w-44 md:bg-slate-300/25 md:blur-3xl dark:bg-slate-500/18 md:dark:bg-slate-500/25"
         animate={
           reduceMotion || !contactInView
-            ? { opacity: 0.6, scale: 1 }
+            ? { opacity: 0.48, scale: 1 }
             : { opacity: [0.35, 0.7, 0.35], scale: [0.94, 1.08, 0.94] }
         }
         transition={
@@ -129,10 +129,10 @@ export function ContactCollaborationGrid({
         }
       />
       <motion.div
-        className="pointer-events-none absolute -bottom-10 right-2 h-40 w-40 rounded-full bg-zinc-300/20 blur-3xl dark:bg-zinc-500/25"
+        className="pointer-events-none absolute -bottom-6 right-2 h-28 w-28 rounded-full bg-zinc-300/15 blur-2xl md:-bottom-10 md:h-40 md:w-40 md:bg-zinc-300/20 md:blur-3xl dark:bg-zinc-500/18 md:dark:bg-zinc-500/25"
         animate={
           reduceMotion || !contactInView
-            ? { opacity: 0.5, scale: 1 }
+            ? { opacity: 0.42, scale: 1 }
             : { opacity: [0.3, 0.65, 0.3], scale: [1, 1.12, 1] }
         }
         transition={
@@ -297,7 +297,7 @@ export function ContactCollaborationGrid({
                 {primaryEmail ? (
                   <a
                     href={primaryEmail.href}
-                    className="inline-flex items-center gap-2 text-foreground transition-colors hover:text-primary"
+                    className="inline-flex min-w-0 items-center gap-2 break-all text-foreground transition-colors hover:text-primary"
                   >
                     <Mail className="h-4 w-4" />
                     {primaryEmail.value}
@@ -306,7 +306,7 @@ export function ContactCollaborationGrid({
                 {phone ? (
                   <a
                     href={phone.href}
-                    className="inline-flex items-center gap-2 text-foreground transition-colors hover:text-primary"
+                    className="inline-flex min-w-0 items-center gap-2 break-all text-foreground transition-colors hover:text-primary"
                   >
                     <Phone className="h-4 w-4" />
                     {phone.value}

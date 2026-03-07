@@ -37,6 +37,10 @@ function RepeatingTextReveal({
       animate={controls}
       viewport={{ amount: 0.08, once: false, margin: "0px 0px -6% 0px" }}
       onViewportEnter={() => {
+        if (reduceMotion) {
+          controls.set({ opacity: 1, y: 0 });
+          return;
+        }
         controls.set({ opacity: 0, y: hiddenY });
         void controls.start({
           opacity: 1,
@@ -143,10 +147,10 @@ export function ProjectsShowcase({
       transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <motion.div
-        className="pointer-events-none absolute -left-10 -top-8 h-40 w-40 rounded-full bg-amber-300/20 blur-3xl dark:bg-amber-500/20"
+        className="pointer-events-none absolute -left-6 -top-6 h-28 w-28 rounded-full bg-amber-300/15 blur-2xl md:-left-10 md:-top-8 md:h-40 md:w-40 md:bg-amber-300/20 md:blur-3xl dark:bg-amber-500/15 md:dark:bg-amber-500/20"
         animate={
           reduceMotion || !shouldRevealProjects
-            ? { opacity: 0.55, scale: 1 }
+            ? { opacity: 0.45, scale: 1 }
             : { opacity: [0.3, 0.7, 0.3], scale: [0.95, 1.08, 0.95] }
         }
         transition={
@@ -156,10 +160,10 @@ export function ProjectsShowcase({
         }
       />
       <motion.div
-        className="pointer-events-none absolute -bottom-10 right-0 h-44 w-44 rounded-full bg-cyan-300/20 blur-3xl dark:bg-cyan-500/20"
+        className="pointer-events-none absolute -bottom-6 right-0 h-28 w-28 rounded-full bg-cyan-300/15 blur-2xl md:-bottom-10 md:h-44 md:w-44 md:bg-cyan-300/20 md:blur-3xl dark:bg-cyan-500/15 md:dark:bg-cyan-500/20"
         animate={
           reduceMotion || !shouldRevealProjects
-            ? { opacity: 0.5, scale: 1 }
+            ? { opacity: 0.42, scale: 1 }
             : { opacity: [0.28, 0.62, 0.28], scale: [1, 1.1, 1] }
         }
         transition={
@@ -204,7 +208,7 @@ export function ProjectsShowcase({
                 initial={
                   reduceMotion
                     ? { opacity: 0 }
-                    : { opacity: 0, y: 34, scale: 0.94, filter: "blur(10px)" }
+                    : { opacity: 0, y: 28, scale: 0.96, filter: "blur(6px)" }
                 }
                 whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                 viewport={{ amount: 0.45, once: false, margin: "0px 0px -12% 0px" }}
@@ -222,7 +226,7 @@ export function ProjectsShowcase({
                         transition: { type: "spring", stiffness: 230, damping: 18 },
                       }
                 }
-                className="group rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_48px_-28px_rgba(0,0,0,0.7)] md:p-5"
+                className="group min-w-0 rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_48px_-28px_rgba(0,0,0,0.7)] md:p-5"
                 data-project-level={showAllProjects && index >= 4 ? "extra" : "base"}
               >
                 <RepeatingTextReveal delay={0.08 + index * 0.05} reduceMotion={reduceMotion}>
@@ -232,11 +236,11 @@ export function ProjectsShowcase({
                     </p>
                     <Icon className="h-4 w-4 text-primary/85 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </div>
-                  <h4 className="mt-2 text-lg font-semibold tracking-tight">
+                  <h4 className="mt-2 break-words text-lg font-semibold tracking-tight">
                     {project.title}
                   </h4>
-                  <p className="mt-2 text-sm text-muted-foreground">{project.summary}</p>
-                  <p className="mt-3 rounded-xl border border-border/70 bg-card/75 px-3 py-2 text-sm text-foreground/90">
+                  <p className="mt-2 break-words text-sm text-muted-foreground">{project.summary}</p>
+                  <p className="mt-3 break-words rounded-xl border border-border/70 bg-card/75 px-3 py-2 text-sm text-foreground/90">
                     {project.highlight}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -259,7 +263,7 @@ export function ProjectsShowcase({
                             href={link.href}
                             target={isExternal ? "_blank" : undefined}
                             rel={isExternal ? "noreferrer" : undefined}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary/45 hover:text-primary"
+                            className="inline-flex max-w-full items-center gap-1.5 break-all rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary/45 hover:text-primary"
                           >
                             {link.label}
                             <ArrowUpRight className="h-3 w-3" />

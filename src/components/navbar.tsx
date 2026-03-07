@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -164,6 +164,25 @@ export function Navbar({
   const [activeTab, setActiveTab] = useState<string>(defaultActive);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const scrollToSection = useCallback((
+    sectionId: string,
+    behavior: ScrollBehavior = "smooth"
+  ) => {
+    const target = document.getElementById(sectionId);
+    if (!target) return false;
+
+    const targetTop =
+      target.getBoundingClientRect().top + window.scrollY - NAV_SCROLL_OFFSET;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior });
+    return true;
+  }, []);
+
+  const scrollToCurrentHash = useCallback((behavior: ScrollBehavior = "smooth") => {
+    const sectionId = window.location.hash.replace(/^#/, "");
+    if (!sectionId) return false;
+    return scrollToSection(sectionId, behavior);
+  }, [scrollToSection]);
+
   useEffect(() => {
     if (pathname !== "/") return;
 
@@ -219,15 +238,28 @@ export function Navbar({
       });
     };
 
+    const onHistoryNavigation = () => {
+      window.requestAnimationFrame(() => {
+        scrollToCurrentHash("smooth");
+        onPositionChange();
+      });
+    };
+
     window.addEventListener("scroll", onPositionChange, { passive: true });
-    window.addEventListener("hashchange", onPositionChange);
+    window.addEventListener("popstate", onHistoryNavigation);
+    window.addEventListener("hashchange", onHistoryNavigation);
+
+    window.requestAnimationFrame(() => {
+      scrollToCurrentHash("auto");
+    });
 
     return () => {
       window.cancelAnimationFrame(frameId);
       window.removeEventListener("scroll", onPositionChange);
-      window.removeEventListener("hashchange", onPositionChange);
+      window.removeEventListener("popstate", onHistoryNavigation);
+      window.removeEventListener("hashchange", onHistoryNavigation);
     };
-  }, [defaultActive, items, pathname]);
+  }, [defaultActive, items, pathname, scrollToCurrentHash]);
 
   const handleNavItemClick = (
     item: NavItem,
@@ -247,14 +279,16 @@ export function Navbar({
     const targetId = item.url.replace("/#", "");
 
     const scrollToTarget = () => {
-      const target = document.getElementById(targetId);
-      if (!target) return false;
+      const scrolled = scrollToSection(targetId, "smooth");
+      if (!scrolled) return false;
 
-      const targetTop =
-        target.getBoundingClientRect().top + window.scrollY - NAV_SCROLL_OFFSET;
-      window.history.replaceState(null, "", item.url);
-      window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
-      return true;
+      const currentUrl = `${window.location.pathname}${window.location.hash}`;
+      if (currentUrl !== item.url) {
+        window.history.pushState({ section: targetId }, "", item.url);
+      } else {
+        window.history.replaceState({ section: targetId }, "", item.url);
+      }
+      return scrolled;
     };
 
     window.requestAnimationFrame(() => {
