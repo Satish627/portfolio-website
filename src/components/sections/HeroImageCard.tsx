@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { type MouseEvent } from "react";
 import Image from "next/image";
 import {
   motion,
@@ -16,18 +16,17 @@ export function HeroImageCard({ inView }: { inView: boolean }) {
   const reduceMotion = useReducedMotion();
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
-  const [spinTurns, setSpinTurns] = useState(0);
 
-  const rotateX = useSpring(useTransform(pointerY, [-130, 130], [18, -18]), {
-    stiffness: 220,
-    damping: 18,
+  const rotateX = useSpring(useTransform(pointerY, [-140, 140], [10, -10]), {
+    stiffness: 160,
+    damping: 22,
   });
-  const rotateY = useSpring(useTransform(pointerX, [-130, 130], [-20, 20]), {
-    stiffness: 220,
-    damping: 18,
+  const rotateY = useSpring(useTransform(pointerX, [-140, 140], [-12, 12]), {
+    stiffness: 160,
+    damping: 22,
   });
-  const glareX = useTransform(pointerX, [-130, 130], [20, 80]);
-  const glareY = useTransform(pointerY, [-130, 130], [18, 82]);
+  const glareX = useTransform(pointerX, [-140, 140], [24, 76]);
+  const glareY = useTransform(pointerY, [-140, 140], [22, 78]);
   const glare = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.5), rgba(255,255,255,0) 52%)`;
 
   const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
@@ -42,11 +41,6 @@ export function HeroImageCard({ inView }: { inView: boolean }) {
   const handleMouseLeave = () => {
     pointerX.set(0);
     pointerY.set(0);
-  };
-
-  const handleSpinClick = () => {
-    if (reduceMotion) return;
-    setSpinTurns((current) => current + 1);
   };
 
   return (
@@ -72,51 +66,54 @@ export function HeroImageCard({ inView }: { inView: boolean }) {
       />
 
       <motion.div
-        style={{
-          rotateX: reduceMotion ? 0 : rotateX,
-          rotateY: reduceMotion ? 0 : rotateY,
-          transformStyle: "preserve-3d",
-          willChange: "transform",
-        }}
         animate={
           reduceMotion || !inView
-            ? { y: 0, rotateZ: 0 }
-            : { y: [0, -14, 0], rotateZ: [0, 1.2, 0] }
+            ? { x: 0, y: 0, rotateZ: 0 }
+            : {
+                x: [0, 4, 0, -4, 0],
+                y: [0, -10, 0, 8, 0],
+                rotateZ: [0, 0.9, 0, -0.9, 0],
+              }
         }
         transition={
           reduceMotion
             ? undefined
             : {
-                duration: 3.8,
+                duration: 5.8,
                 ease: "easeInOut",
                 repeat: Infinity,
-                repeatType: "mirror",
-              }
-        }
-        whileHover={
-          reduceMotion
-            ? undefined
-            : {
-                scale: 1.08,
-                rotateZ: -0.8,
-                transition: { type: "spring", stiffness: 220, damping: 18 },
               }
         }
       >
         <motion.div
-          className="cursor-pointer"
-          onClick={handleSpinClick}
-          animate={reduceMotion ? { rotateZ: 0 } : { rotateZ: spinTurns * 360 }}
+          className="will-change-transform"
+          animate={
+            reduceMotion || !inView
+              ? { rotateY: 0, rotateX: 0 }
+              : {
+                  rotateY: [0, -6, 0, 6, 0],
+                  rotateX: [0, 1.5, 0, -1.5, 0],
+                }
+          }
           transition={
             reduceMotion
               ? undefined
               : {
-                  duration: 0.85,
-                  ease: [0.2, 0.85, 0.2, 1],
+                  duration: 6.2,
+                  ease: "easeInOut",
+                  repeat: Infinity,
                 }
           }
+          style={{ transformStyle: "preserve-3d" }}
         >
           <motion.div
+            style={{
+              rotateX: reduceMotion ? 0 : rotateX,
+              rotateY: reduceMotion ? 0 : rotateY,
+              transform: "translateZ(46px)",
+              transformStyle: "preserve-3d",
+              willChange: "transform",
+            }}
             animate={
               reduceMotion || !inView
                 ? { opacity: 1, scale: 1 }
@@ -132,7 +129,15 @@ export function HeroImageCard({ inView }: { inView: boolean }) {
                   }
             }
             className="relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xl"
-            style={{ transform: "translateZ(46px)" }}
+            whileHover={
+              reduceMotion
+                ? undefined
+                : {
+                    scale: 1.03,
+                    rotateZ: -0.6,
+                    transition: { type: "spring", stiffness: 180, damping: 20 },
+                  }
+            }
           >
             <motion.div
               className="pointer-events-none absolute inset-0 bg-gradient-to-b from-zinc-100 via-white to-zinc-200 dark:from-slate-900 dark:via-zinc-950 dark:to-slate-900"

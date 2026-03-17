@@ -5,11 +5,13 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import type { ISourceOptions } from "@tsparticles/engine";
 import { useTheme } from "next-themes";
+import { useHasMounted } from "@/src/hooks/use-has-mounted";
 
 export function AnimatedBackground() {
   const [ready, setReady] = useState(false);
+  const mounted = useHasMounted();
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+  const isDark = mounted ? resolvedTheme === "dark" : true;
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {

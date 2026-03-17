@@ -3,10 +3,12 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/src/components/ui/button";
+import { useHasMounted } from "@/src/hooks/use-has-mounted";
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const isDark = resolvedTheme ? resolvedTheme === "dark" : true;
+  const mounted = useHasMounted();
+  const isDark = mounted ? resolvedTheme === "dark" : true;
   const nextTheme = isDark ? "light" : "dark";
 
   return (
@@ -17,6 +19,7 @@ export function ThemeToggle() {
       className="relative"
       aria-label={`Switch to ${nextTheme} theme`}
       title={`Switch to ${nextTheme} theme`}
+      disabled={!mounted}
       onClick={() => setTheme(nextTheme)}
     >
       <Sun
