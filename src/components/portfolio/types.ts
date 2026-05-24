@@ -75,5 +75,6 @@ export type HomeSectionContent = {
   badge: string;
   headline: string;
   paragraphs: readonly string[];
+  techStack: readonly string[];
   ctas: readonly HomeCta[];
 };

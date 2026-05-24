@@ -7,6 +7,7 @@ export const homeSection = {
     "I build responsive and scalable web applications with a strong focus on clean code, performance, and user experience.",
     "My work focuses on modern frontend development using technologies like Next.js, TypeScript, and Tailwind while understanding the full stack behind the scenes.",
   ],
+  techStack: ["Next.js", "TypeScript", "React", "Node.js", "PostgreSQL", "Docker"] as const,
   ctas: [
     {
       label: "View Projects",

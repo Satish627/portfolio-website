@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import anime from "animejs";
 import {
   motion,
-  useAnimationControls,
   useInView,
   useReducedMotion,
 } from "framer-motion";
@@ -19,44 +18,6 @@ import {
 import { Button } from "@/src/components/ui/button";
 import type { ProjectItem } from "@/src/components/portfolio/types";
 
-function RepeatingTextReveal({
-  children,
-  delay,
-  reduceMotion,
-}: {
-  children: ReactNode;
-  delay: number;
-  reduceMotion: boolean | null;
-}) {
-  const controls = useAnimationControls();
-  const hiddenY = reduceMotion ? 0 : 12;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: hiddenY }}
-      animate={controls}
-      viewport={{ amount: 0.08, once: false, margin: "0px 0px -6% 0px" }}
-      onViewportEnter={() => {
-        if (reduceMotion) {
-          controls.set({ opacity: 1, y: 0 });
-          return;
-        }
-        controls.set({ opacity: 0, y: hiddenY });
-        void controls.start({
-          opacity: 1,
-          y: 0,
-          transition: {
-            duration: 0.4,
-            delay,
-            ease: [0.2, 0.8, 0.2, 1],
-          },
-        });
-      }}
-    >
-      {children}
-    </motion.div>
-  );
-}
 
 export function ProjectsShowcase({
   projects,
@@ -217,33 +178,21 @@ export function ProjectsShowcase({
                   delay: index * 0.08,
                   ease: [0.2, 0.8, 0.2, 1],
                 }}
-                whileHover={
-                  reduceMotion
-                    ? undefined
-                    : {
-                        y: -6,
-                        scale: 1.02,
-                        transition: { type: "spring", stiffness: 230, damping: 18 },
-                      }
-                }
-                className="group min-w-0 rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_48px_-28px_rgba(0,0,0,0.7)] md:p-5"
+                className="group relative min-h-[180px] min-w-0 overflow-hidden rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_48px_-28px_rgba(0,0,0,0.7)] md:p-5"
                 data-project-level={showAllProjects && index >= 4 ? "extra" : "base"}
               >
-                <RepeatingTextReveal delay={0.08 + index * 0.05} reduceMotion={reduceMotion}>
+                {/* Always-visible face */}
+                <div className="flex h-full flex-col gap-3">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                       {project.category}
                     </p>
-                    <Icon className="h-4 w-4 text-primary/85 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    <Icon className="h-4 w-4 text-primary/85" />
                   </div>
-                  <h4 className="mt-2 break-words text-lg font-semibold tracking-tight">
+                  <h4 className="break-words text-lg font-semibold tracking-tight">
                     {project.title}
                   </h4>
-                  <p className="mt-2 break-words text-sm text-muted-foreground">{project.summary}</p>
-                  <p className="mt-3 break-words rounded-xl border border-border/70 bg-card/75 px-3 py-2 text-sm text-foreground/90">
-                    {project.highlight}
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {project.stack.map((tech) => (
                       <span
                         key={`${project.title}-${tech}`}
@@ -253,8 +202,16 @@ export function ProjectsShowcase({
                       </span>
                     ))}
                   </div>
+                </div>
+
+                {/* Hover overlay — slides up from bottom */}
+                <div className="absolute inset-0 flex translate-y-full flex-col gap-3 rounded-2xl bg-card/98 p-4 backdrop-blur-sm transition-transform duration-300 ease-out group-hover:translate-y-0 md:p-5">
+                  <p className="text-sm text-muted-foreground">{project.summary}</p>
+                  <p className="rounded-xl border border-border/70 bg-background/60 px-3 py-2 text-sm text-foreground/90">
+                    {project.highlight}
+                  </p>
                   {project.links?.length ? (
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-auto flex flex-wrap gap-2">
                       {project.links.map((link) => {
                         const isExternal = link.href.startsWith("http");
                         return (
@@ -272,7 +229,7 @@ export function ProjectsShowcase({
                       })}
                     </div>
                   ) : null}
-                </RepeatingTextReveal>
+                </div>
               </motion.article>
             );
           })}

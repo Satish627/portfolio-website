@@ -1,13 +1,14 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import {
   motion,
   useAnimationControls,
   useInView,
   useReducedMotion,
+  AnimatePresence,
 } from "framer-motion";
-import { BriefcaseBusiness } from "lucide-react";
+import { BriefcaseBusiness, ChevronDown, ChevronUp } from "lucide-react";
 import type { ExperienceItem } from "@/src/components/portfolio/types";
 
 function RepeatingTextReveal({
@@ -57,6 +58,16 @@ export function ExperienceTimeline({
   const experienceRef = useRef<HTMLDivElement | null>(null);
   const experienceInView = useInView(experienceRef, { once: false, amount: 0.25 });
   const reduceMotion = useReducedMotion();
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+
+  const toggleExpand = (index: number) => {
+    setExpandedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   return (
     <motion.div
@@ -115,62 +126,86 @@ export function ExperienceTimeline({
           />
 
           <div className="space-y-4">
-            {items.map((item, index) => (
-              <motion.article
-                key={`${item.role}-${item.company}`}
-                initial={
-                  reduceMotion
-                    ? { opacity: 0 }
-                    : { opacity: 0, x: 30, y: 28, scale: 0.96, filter: "blur(6px)" }
-                }
-                whileInView={{ opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
-                viewport={{ amount: 0.45, once: false, margin: "0px 0px -12% 0px" }}
-                transition={{
-                  duration: 0.62,
-                  delay: index * 0.08,
-                  ease: [0.2, 0.8, 0.2, 1],
-                }}
-                whileHover={
-                  reduceMotion
-                    ? undefined
-                    : {
-                        y: -5,
-                        scale: 1.02,
-                        transition: { type: "spring", stiffness: 230, damping: 18 },
-                      }
-                }
-                className="relative min-w-0 rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_46px_-30px_rgba(0,0,0,0.68)] md:p-5"
-              >
-                <span className="absolute -left-8 top-7 h-3 w-3 rounded-full border-2 border-background bg-primary" />
-                <RepeatingTextReveal delay={0.08 + index * 0.05} reduceMotion={reduceMotion}>
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="rounded-full border border-border/70 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground/85">
-                      {item.type}
-                    </p>
-                    <p className="text-xs font-medium uppercase tracking-[0.11em] text-muted-foreground">
-                      {item.period}
-                    </p>
-                  </div>
-
-                  <h4 className="mt-2 break-words text-lg font-semibold tracking-tight">{item.role}</h4>
-                  <p className="break-words text-sm text-muted-foreground">
-                    {item.company} · {item.location}
-                  </p>
-                  <p className="mt-2 break-words text-sm text-muted-foreground">{item.summary}</p>
-
-                  <ul className="mt-3 grid gap-1.5">
-                    {item.highlights.map((highlight) => (
-                      <li
-                        key={`${item.company}-${highlight}`}
-                        className="break-words text-sm text-foreground/90"
+            {items.map((item, index) => {
+              const isExpanded = expandedItems.has(index);
+              return (
+                <motion.article
+                  key={`${item.role}-${item.company}`}
+                  initial={
+                    reduceMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, x: 30, y: 28, scale: 0.96, filter: "blur(6px)" }
+                  }
+                  whileInView={{ opacity: 1, x: 0, y: 0, scale: 1, filter: "blur(0px)" }}
+                  viewport={{ amount: 0.45, once: false, margin: "0px 0px -12% 0px" }}
+                  transition={{
+                    duration: 0.62,
+                    delay: index * 0.08,
+                    ease: [0.2, 0.8, 0.2, 1],
+                  }}
+                  className="relative min-w-0 rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_46px_-30px_rgba(0,0,0,0.68)] md:p-5"
+                >
+                  <span className="absolute -left-8 top-7 h-3 w-3 rounded-full border-2 border-background bg-primary" />
+                  <RepeatingTextReveal delay={0.08 + index * 0.05} reduceMotion={reduceMotion}>
+                    {/* Always visible header */}
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="rounded-full border border-border/70 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground/85">
+                            {item.type}
+                          </p>
+                          <p className="text-xs font-medium uppercase tracking-[0.11em] text-muted-foreground">
+                            {item.period}
+                          </p>
+                        </div>
+                        <h4 className="mt-2 break-words text-lg font-semibold tracking-tight">{item.role}</h4>
+                        <p className="break-words text-sm text-muted-foreground">
+                          {item.company} · {item.location}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleExpand(index)}
+                        className="flex shrink-0 items-center gap-1 rounded-full border border-border/70 bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                        aria-expanded={isExpanded}
                       >
-                        • {highlight}
-                      </li>
-                    ))}
-                  </ul>
-                </RepeatingTextReveal>
-              </motion.article>
-            ))}
+                        {isExpanded ? (
+                          <>Less <ChevronUp className="h-3 w-3" /></>
+                        ) : (
+                          <>Details <ChevronDown className="h-3 w-3" /></>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Expandable details */}
+                    <AnimatePresence initial={false}>
+                      {isExpanded && (
+                        <motion.div
+                          key="details"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
+                          className="overflow-hidden"
+                        >
+                          <p className="mt-3 break-words text-sm text-muted-foreground">{item.summary}</p>
+                          <ul className="mt-3 grid gap-1.5">
+                            {item.highlights.map((highlight) => (
+                              <li
+                                key={`${item.company}-${highlight}`}
+                                className="break-words text-sm text-foreground/90"
+                              >
+                                • {highlight}
+                              </li>
+                            ))}
+                          </ul>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </RepeatingTextReveal>
+                </motion.article>
+              );
+            })}
           </div>
         </div>
       </div>

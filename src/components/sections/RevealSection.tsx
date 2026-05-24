@@ -49,16 +49,6 @@ export function RevealSection({ section }: { section: PortfolioSection }) {
         >
           {section.description}
         </motion.p>
-        {section.details?.map((paragraph, index) => (
-          <motion.p
-            key={`${section.id}-${index}`}
-            className="max-w-3xl text-base text-muted-foreground md:text-lg"
-            variants={itemVariants}
-            transition={{ delay: index * 0.08 + 0.05 }}
-          >
-            {paragraph}
-          </motion.p>
-        ))}
 
         {section.storySteps ? <VerticalStoryTimeline steps={section.storySteps} /> : null}
         {section.milestones ? <EducationTimeline milestones={section.milestones} /> : null}
