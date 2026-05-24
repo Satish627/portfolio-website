@@ -1,18 +1,18 @@
 "use client";
 
-import { aboutSection } from "@/src/app/about/content";
 import { contactSection } from "@/src/app/contact/content";
 import { educationSection } from "@/src/app/education/content";
 import { experienceSection } from "@/src/app/experience/content";
 import { homeSection } from "@/src/app/home/content";
 import { projectsSection } from "@/src/app/projects/content";
+import { skillsSection } from "@/src/app/skills/content";
 import type { PortfolioSection } from "@/src/components/portfolio/types";
 import { ScrollStatus } from "@/src/components/scroll-status";
 import { HeroSection } from "@/src/components/sections/HeroSection";
 import { RevealSection } from "@/src/components/sections/RevealSection";
 
 const sections: readonly PortfolioSection[] = [
-  aboutSection,
+  skillsSection,
   experienceSection,
   projectsSection,
   educationSection,

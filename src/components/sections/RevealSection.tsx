@@ -8,6 +8,7 @@ import { ContactCollaborationGrid } from "@/src/components/features/ContactColla
 import { EducationTimeline } from "@/src/components/features/EducationTimeline";
 import { ExperienceTimeline } from "@/src/components/features/ExperienceTimeline";
 import { ProjectsShowcase } from "@/src/components/features/ProjectsShowcase";
+import { SkillsShowcase } from "@/src/components/features/SkillsShowcase";
 import { VerticalStoryTimeline } from "@/src/components/features/VerticalStoryTimeline";
 
 export function RevealSection({ section }: { section: PortfolioSection }) {
@@ -50,6 +51,7 @@ export function RevealSection({ section }: { section: PortfolioSection }) {
           {section.description}
         </motion.p>
 
+        {section.skillCategories ? <SkillsShowcase categories={section.skillCategories} /> : null}
         {section.storySteps ? <VerticalStoryTimeline steps={section.storySteps} /> : null}
         {section.milestones ? <EducationTimeline milestones={section.milestones} /> : null}
         {section.experienceItems ? <ExperienceTimeline items={section.experienceItems} /> : null}

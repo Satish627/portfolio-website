@@ -9,10 +9,10 @@ import {
   FolderKanban,
   GraduationCap,
   House,
+  Layers,
   Mail,
   Menu,
   type LucideIcon,
-  UserRound,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
@@ -33,7 +33,7 @@ interface NavBarProps {
 
 const defaultItems: NavItem[] = [
   { name: "Home", url: "/#home", icon: House },
-  { name: "About", url: "/#about", icon: UserRound },
+  { name: "Skills", url: "/#skills", icon: Layers },
   { name: "Experience", url: "/#experience", icon: BriefcaseBusiness },
   { name: "Projects", url: "/#projects", icon: FolderKanban },
   { name: "Education", url: "/#education", icon: GraduationCap },

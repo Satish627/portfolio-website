@@ -1,3 +1,13 @@
+export type Skill = {
+  name: string;
+  level: number;
+};
+
+export type SkillCategory = {
+  name: string;
+  skills: readonly Skill[];
+};
+
 export type StoryStep = {
   phase: string;
   title: string;
@@ -55,6 +65,7 @@ export type PortfolioSection = {
   title: string;
   description: string;
   details?: readonly string[];
+  skillCategories?: readonly SkillCategory[];
   storySteps?: readonly StoryStep[];
   milestones?: readonly EducationMilestone[];
   experienceItems?: readonly ExperienceItem[];
