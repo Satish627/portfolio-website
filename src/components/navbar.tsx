@@ -33,10 +33,10 @@ interface NavBarProps {
 
 const defaultItems: NavItem[] = [
   { name: "Home", url: "/#home", icon: House },
-  { name: "Skills", url: "/#skills", icon: Layers },
-  { name: "Experience", url: "/#experience", icon: BriefcaseBusiness },
-  { name: "Projects", url: "/#projects", icon: FolderKanban },
   { name: "Education", url: "/#education", icon: GraduationCap },
+  { name: "Experience", url: "/#experience", icon: BriefcaseBusiness },
+  { name: "Skills", url: "/#skills", icon: Layers },
+  { name: "Projects", url: "/#projects", icon: FolderKanban },
   { name: "Contact", url: "/#contact", icon: Mail },
 ];
 

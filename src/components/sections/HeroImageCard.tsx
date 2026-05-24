@@ -52,7 +52,7 @@ export function HeroImageCard({ inView }: { inView: boolean }) {
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        className="pointer-events-none absolute -inset-5 -z-10 rounded-[2rem] bg-gradient-to-br from-cyan-300/25 via-sky-200/10 to-emerald-300/20 blur-2xl dark:from-cyan-500/25 dark:via-blue-500/15 dark:to-emerald-400/15"
+        className="pointer-events-none absolute -inset-5 -z-10 rounded-full bg-gradient-to-br from-cyan-300/25 via-sky-200/10 to-emerald-300/20 blur-2xl dark:from-cyan-500/25 dark:via-blue-500/15 dark:to-emerald-400/15"
         animate={
           reduceMotion || !inView
             ? { opacity: 0.65, scale: 1 }
@@ -128,13 +128,12 @@ export function HeroImageCard({ inView }: { inView: boolean }) {
                     ease: "easeInOut",
                   }
             }
-            className="relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xl"
+            className="relative aspect-square overflow-hidden rounded-full border-2 border-border/70 bg-card shadow-xl"
             whileHover={
               reduceMotion
                 ? undefined
                 : {
                     scale: 1.03,
-                    rotateZ: -0.6,
                     transition: { type: "spring", stiffness: 180, damping: 20 },
                   }
             }
@@ -168,10 +167,9 @@ export function HeroImageCard({ inView }: { inView: boolean }) {
             <Image
               src="/hero.png"
               alt="Portrait of Satish"
-              width={900}
-              height={1200}
+              fill
               priority
-              className="relative z-10 h-auto w-full object-cover saturate-[1.02] dark:brightness-110 dark:contrast-110 dark:saturate-110"
+              className="relative z-10 object-cover object-top saturate-[1.02] dark:brightness-110 dark:contrast-110 dark:saturate-110"
               sizes="(min-width: 768px) 300px, 250px"
             />
             <motion.div

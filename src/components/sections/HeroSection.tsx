@@ -131,16 +131,6 @@ export function HeroSection({
               </motion.span>
             )}
           </motion.h1>
-          <motion.div className="flex flex-wrap gap-2 pt-1" variants={itemVariants}>
-            {homeSection.techStack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:border-primary/60 hover:bg-primary/20"
-              >
-                {tech}
-              </span>
-            ))}
-          </motion.div>
 
           <motion.div className="flex flex-wrap items-center gap-2" variants={itemVariants}>
             {githubLink ? (

@@ -12,10 +12,10 @@ import { HeroSection } from "@/src/components/sections/HeroSection";
 import { RevealSection } from "@/src/components/sections/RevealSection";
 
 const sections: readonly PortfolioSection[] = [
-  skillsSection,
-  experienceSection,
-  projectsSection,
   educationSection,
+  experienceSection,
+  skillsSection,
+  projectsSection,
   contactSection,
 ];
 

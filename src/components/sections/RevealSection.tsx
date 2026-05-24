@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { lineVariants, itemVariants, sectionVariants, staggerVariants } from "@/src/components/portfolio/motion";
+import { sectionVariants, staggerVariants } from "@/src/components/portfolio/motion";
 import type { PortfolioSection } from "@/src/components/portfolio/types";
 import { ContactCollaborationGrid } from "@/src/components/features/ContactCollaborationGrid";
 import { EducationTimeline } from "@/src/components/features/EducationTimeline";
@@ -31,26 +31,6 @@ export function RevealSection({ section }: { section: PortfolioSection }) {
         className="section-content mx-auto flex min-h-[80svh] w-full max-w-5xl flex-col justify-center gap-4 px-4 py-16"
         variants={staggerVariants}
       >
-        <motion.div className="mb-2 h-1 w-24 rounded-full bg-primary/70" variants={lineVariants} />
-        <motion.p
-          className="text-sm uppercase tracking-[0.16em] text-muted-foreground"
-          variants={itemVariants}
-        >
-          {section.kicker ?? "Section"}
-        </motion.p>
-        <motion.h2
-          className="text-3xl font-semibold tracking-tight md:text-5xl"
-          variants={itemVariants}
-        >
-          {section.title}
-        </motion.h2>
-        <motion.p
-          className="max-w-2xl text-base text-muted-foreground md:text-lg"
-          variants={itemVariants}
-        >
-          {section.description}
-        </motion.p>
-
         {section.skillCategories ? <SkillsShowcase categories={section.skillCategories} /> : null}
         {section.storySteps ? <VerticalStoryTimeline steps={section.storySteps} /> : null}
         {section.milestones ? <EducationTimeline milestones={section.milestones} /> : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import anime from "animejs";
 import {
   motion,
@@ -9,15 +9,16 @@ import {
 } from "framer-motion";
 import {
   ArrowUpRight,
-  ChevronDown,
-  ChevronUp,
   Code2,
   FolderKanban,
+  Github,
   Rocket,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import type { ProjectItem } from "@/src/components/portfolio/types";
 
+
+const GITHUB_URL = "https://github.com/Satish627";
 
 export function ProjectsShowcase({
   projects,
@@ -28,10 +29,8 @@ export function ProjectsShowcase({
   const projectsBadgeRef = useRef<HTMLSpanElement | null>(null);
   const projectsInView = useInView(projectsRef, { once: true, amount: 0.05 });
   const reduceMotion = useReducedMotion();
-  const [showAllProjects, setShowAllProjects] = useState(false);
   const projectIcons = [Rocket, Code2, FolderKanban] as const;
-  const visibleProjects = showAllProjects ? projects : projects.slice(0, 4);
-  const shouldRevealProjects = projectsInView || showAllProjects;
+  const visibleProjects = projects.slice(0, 6);
 
   useEffect(() => {
     if (reduceMotion || !projectsBadgeRef.current) return;
@@ -48,69 +47,18 @@ export function ProjectsShowcase({
     return () => animation.pause();
   }, [reduceMotion]);
 
-  useEffect(() => {
-    if (!showAllProjects || reduceMotion || !projectsRef.current) return;
-    const extraCards = projectsRef.current.querySelectorAll(
-      "[data-project-level='extra']"
-    );
-    if (!extraCards.length) return;
-
-    anime.remove(extraCards);
-    anime({
-      targets: extraCards,
-      opacity: [0.2, 1],
-      translateY: [24, 0],
-      scale: [0.97, 1],
-      delay: anime.stagger(80),
-      duration: 620,
-      easing: "easeOutExpo",
-    });
-  }, [showAllProjects, reduceMotion]);
-
-  const handleToggleProjects = () => {
-    if (showAllProjects) {
-      setShowAllProjects(false);
-
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          const sectionTop = projectsRef.current
-            ? projectsRef.current.getBoundingClientRect().top + window.scrollY - 104
-            : 0;
-
-          window.scrollTo({
-            top: Math.max(0, sectionTop),
-            behavior: "smooth",
-          });
-        });
-      });
-
-      return;
-    }
-
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        window.scrollBy({
-          top: Math.min(280, window.innerHeight * 0.34),
-          behavior: "smooth",
-        });
-      });
-    });
-
-    setShowAllProjects((current) => !current);
-  };
-
   return (
     <motion.div
       ref={projectsRef}
       className="relative mt-6 w-full"
       initial={{ opacity: 0, y: 20 }}
-      animate={shouldRevealProjects ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <motion.div
         className="pointer-events-none absolute -left-6 -top-6 h-28 w-28 rounded-full bg-amber-300/15 blur-2xl md:-left-10 md:-top-8 md:h-40 md:w-40 md:bg-amber-300/20 md:blur-3xl dark:bg-amber-500/15 md:dark:bg-amber-500/20"
         animate={
-          reduceMotion || !shouldRevealProjects
+          reduceMotion || !projectsInView
             ? { opacity: 0.45, scale: 1 }
             : { opacity: [0.3, 0.7, 0.3], scale: [0.95, 1.08, 0.95] }
         }
@@ -123,7 +71,7 @@ export function ProjectsShowcase({
       <motion.div
         className="pointer-events-none absolute -bottom-6 right-0 h-28 w-28 rounded-full bg-cyan-300/15 blur-2xl md:-bottom-10 md:h-44 md:w-44 md:bg-cyan-300/20 md:blur-3xl dark:bg-cyan-500/15 md:dark:bg-cyan-500/20"
         animate={
-          reduceMotion || !shouldRevealProjects
+          reduceMotion || !projectsInView
             ? { opacity: 0.42, scale: 1 }
             : { opacity: [0.28, 0.62, 0.28], scale: [1, 1.1, 1] }
         }
@@ -138,7 +86,7 @@ export function ProjectsShowcase({
         <div className="mb-5 flex items-center justify-between gap-3">
           <motion.div
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
-            animate={shouldRevealProjects ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
             transition={{ duration: 0.42, ease: [0.2, 0.8, 0.2, 1] }}
           >
             <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
@@ -153,10 +101,10 @@ export function ProjectsShowcase({
             ref={projectsBadgeRef}
             className="rounded-full border border-border/70 bg-background/75 px-3 py-1 text-xs font-medium text-foreground/80"
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
-            animate={shouldRevealProjects ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
             transition={{ duration: 0.38, delay: 0.08, ease: [0.2, 0.8, 0.2, 1] }}
           >
-            {projects.length} Projects
+            {visibleProjects.length} Projects
           </motion.span>
         </div>
 
@@ -179,7 +127,6 @@ export function ProjectsShowcase({
                   ease: [0.2, 0.8, 0.2, 1],
                 }}
                 className="group relative min-h-[180px] min-w-0 overflow-hidden rounded-2xl border border-border/70 bg-background/95 p-4 backdrop-blur transition-[border-color,box-shadow] hover:border-primary/45 hover:shadow-[0_24px_48px_-28px_rgba(0,0,0,0.7)] md:p-5"
-                data-project-level={showAllProjects && index >= 4 ? "extra" : "base"}
               >
                 {/* Always-visible face */}
                 <div className="flex h-full flex-col gap-3">
@@ -234,26 +181,16 @@ export function ProjectsShowcase({
             );
           })}
         </div>
-        {projects.length > 4 ? (
-          <div className="mt-5 flex justify-center">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={(event) => {
-                event.preventDefault();
-                handleToggleProjects();
-              }}
-              className="min-w-48"
-            >
-              {showAllProjects ? "Show fewer projects" : "Show more projects"}
-              {showAllProjects ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        ) : null}
+
+        <div className="mt-5 flex justify-center">
+          <Button asChild variant="outline" className="gap-2">
+            <a href={GITHUB_URL} target="_blank" rel="noreferrer">
+              <Github className="h-4 w-4" />
+              See all projects on GitHub
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
+          </Button>
+        </div>
       </div>
     </motion.div>
   );
