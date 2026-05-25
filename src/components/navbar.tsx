@@ -302,9 +302,7 @@ export function Navbar({
   return (
     <div className={cn("fixed left-0 right-0 top-6 z-[9999] px-4", className)}>
       <div className="flex items-center justify-between pt-6 md:hidden">
-        <div className="[&_button]:h-10 [&_button]:w-10 [&_button]:rounded-full [&_button]:border-border/60 [&_button]:bg-background/70 dark:[&_button]:border-white/20 dark:[&_button]:bg-black/60">
-          <ThemeToggle />
-        </div>
+        <ThemeToggle />
 
         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
           <SheetTrigger asChild>
@@ -431,9 +429,7 @@ export function Navbar({
               </Link>
             );
           })}
-          <div className="ml-1 [&_button]:h-10 [&_button]:w-10 [&_button]:rounded-full [&_button]:border-border/60 [&_button]:bg-background/70 dark:[&_button]:border-white/20 dark:[&_button]:bg-black/60">
-            <ThemeToggle />
-          </div>
+          <ThemeToggle />
         </motion.div>
       </div>
     </div>

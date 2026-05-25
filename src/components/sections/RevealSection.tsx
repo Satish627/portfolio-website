@@ -2,8 +2,17 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { sectionVariants, staggerVariants } from "@/src/components/portfolio/motion";
+import { BriefcaseBusiness, FolderKanban, GraduationCap, Layers, Mail } from "lucide-react";
+import { itemVariants, sectionVariants, staggerVariants } from "@/src/components/portfolio/motion";
 import type { PortfolioSection } from "@/src/components/portfolio/types";
+
+const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  education: GraduationCap,
+  experience: BriefcaseBusiness,
+  skills: Layers,
+  projects: FolderKanban,
+  contact: Mail,
+};
 import { ContactCollaborationGrid } from "@/src/components/features/ContactCollaborationGrid";
 import { EducationTimeline } from "@/src/components/features/EducationTimeline";
 import { ExperienceTimeline } from "@/src/components/features/ExperienceTimeline";
@@ -18,6 +27,8 @@ export function RevealSection({ section }: { section: PortfolioSection }) {
     amount: 0.2,
   });
 
+  const SectionIcon = SECTION_ICONS[section.id];
+
   return (
     <motion.section
       ref={sectionRef}
@@ -31,6 +42,14 @@ export function RevealSection({ section }: { section: PortfolioSection }) {
         className="section-content mx-auto flex min-h-[80svh] w-full max-w-5xl flex-col justify-center gap-4 px-4 py-16"
         variants={staggerVariants}
       >
+        <motion.div className="flex items-center gap-3" variants={itemVariants}>
+          {SectionIcon ? <SectionIcon className="h-3.5 w-3.5 shrink-0 text-primary" /> : null}
+          <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            {section.title}
+          </span>
+          <div className="h-px flex-1 bg-border/50" />
+        </motion.div>
+
         {section.skillCategories ? <SkillsShowcase categories={section.skillCategories} /> : null}
         {section.storySteps ? <VerticalStoryTimeline steps={section.storySteps} /> : null}
         {section.milestones ? <EducationTimeline milestones={section.milestones} /> : null}

@@ -52,7 +52,7 @@ export function HeroImageCard({ inView }: { inView: boolean }) {
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        className="pointer-events-none absolute -inset-5 -z-10 rounded-full bg-gradient-to-br from-cyan-300/25 via-sky-200/10 to-emerald-300/20 blur-2xl dark:from-cyan-500/25 dark:via-blue-500/15 dark:to-emerald-400/15"
+        className="pointer-events-none absolute -inset-5 -z-10 rounded-full bg-gradient-to-br from-emerald-300/30 via-green-200/15 to-teal-300/20 blur-2xl dark:from-emerald-500/30 dark:via-green-500/15 dark:to-teal-400/20"
         animate={
           reduceMotion || !inView
             ? { opacity: 0.65, scale: 1 }

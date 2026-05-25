@@ -116,7 +116,7 @@ export function ContactCollaborationGrid({
       transition={{ duration: 0.48, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <motion.div
-        className="pointer-events-none absolute -left-6 -top-6 h-28 w-28 rounded-full bg-slate-300/18 blur-2xl md:-left-10 md:-top-8 md:h-44 md:w-44 md:bg-slate-300/25 md:blur-3xl dark:bg-slate-500/18 md:dark:bg-slate-500/25"
+        className="pointer-events-none absolute -left-6 -top-6 h-28 w-28 rounded-full bg-emerald-300/15 blur-2xl md:-left-10 md:-top-8 md:h-44 md:w-44 md:bg-emerald-300/20 md:blur-3xl dark:bg-emerald-500/15 md:dark:bg-emerald-500/20"
         animate={
           reduceMotion || !contactInView
             ? { opacity: 0.48, scale: 1 }
@@ -129,7 +129,7 @@ export function ContactCollaborationGrid({
         }
       />
       <motion.div
-        className="pointer-events-none absolute -bottom-6 right-2 h-28 w-28 rounded-full bg-zinc-300/15 blur-2xl md:-bottom-10 md:h-40 md:w-40 md:bg-zinc-300/20 md:blur-3xl dark:bg-zinc-500/18 md:dark:bg-zinc-500/25"
+        className="pointer-events-none absolute -bottom-6 right-2 h-28 w-28 rounded-full bg-teal-300/12 blur-2xl md:-bottom-10 md:h-40 md:w-40 md:bg-teal-300/15 md:blur-3xl dark:bg-teal-500/12 md:dark:bg-teal-500/18"
         animate={
           reduceMotion || !contactInView
             ? { opacity: 0.42, scale: 1 }
@@ -149,9 +149,9 @@ export function ContactCollaborationGrid({
               <Sparkles className="h-3.5 w-3.5" />
               Let&apos;s Connect
             </p>
-            <h3 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
-              Send a message directly from the contact section
-            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Drop me a message — I&apos;ll get back to you promptly.
+            </p>
           </div>
           <span
             ref={openToWorkRef}

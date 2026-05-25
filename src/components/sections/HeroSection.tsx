@@ -132,6 +132,15 @@ export function HeroSection({
             )}
           </motion.h1>
 
+          {homeSection.tagline ? (
+            <motion.p
+              className="text-sm text-muted-foreground"
+              variants={itemVariants}
+            >
+              {homeSection.tagline}
+            </motion.p>
+          ) : null}
+
           <motion.div className="flex flex-wrap items-center gap-2" variants={itemVariants}>
             {githubLink ? (
               <Button asChild variant="outline">

@@ -11,7 +11,7 @@ export function AnimatedBackground() {
   const [ready, setReady] = useState(false);
   const mounted = useHasMounted();
   const { resolvedTheme } = useTheme();
-  const isDark = mounted ? resolvedTheme === "dark" : true;
+  const isDark = !mounted || resolvedTheme === "dark";
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -21,60 +21,39 @@ export function AnimatedBackground() {
 
   const options: ISourceOptions = useMemo(
     () => ({
-      fullScreen: {
-        enable: true,
-        zIndex: 0,
-      },
-      background: {
-        color: { value: "transparent" },
-      },
+      fullScreen: { enable: true, zIndex: 0 },
+      background: { color: { value: "transparent" } },
       fpsLimit: 60,
       detectRetina: true,
       particles: {
         number: {
-          value: isDark ? 115 : 95,
-          density: {
-            enable: true,
-            width: 1280,
-            height: 720,
-          },
+          value: 115,
+          density: { enable: true, width: 1280, height: 720 },
         },
         color: {
-          value: isDark ? ["#f8fafc", "#fbbf24", "#fb923c"] : "#334155",
+          value: isDark ? ["#f8fafc", "#fbbf24", "#fb923c"] : ["#334155"],
         },
         opacity: {
-          value: { min: isDark ? 0.35 : 0.1, max: isDark ? 1 : 0.45 },
-          animation: {
-            enable: true,
-            speed: isDark ? 1 : 0.8,
-            sync: false,
-          },
+          value: { min: 0.35, max: 1 },
+          animation: { enable: true, speed: 1, sync: false },
         },
         size: {
-          value: { min: isDark ? 1.4 : 1, max: isDark ? 3.8 : 3.2 },
-          animation: {
-            enable: true,
-            speed: 2.2,
-            sync: false,
-          },
+          value: { min: 1.4, max: 3.8 },
+          animation: { enable: true, speed: 2.2, sync: false },
         },
         move: {
           enable: true,
           speed: 0.5,
           direction: "none",
-          outModes: {
-            default: "out",
-          },
+          outModes: { default: "out" },
         },
-        shape: {
-          type: "circle",
-        },
+        shape: { type: "circle" },
         links: {
           enable: true,
-          distance: isDark ? 118 : 100,
-          opacity: isDark ? 0.16 : 0.12,
+          distance: 118,
+          opacity: 0.16,
           color: isDark ? "#f59e0b" : "#0f172a",
-          width: isDark ? 1.15 : 1,
+          width: 1.15,
         },
       },
       interactivity: {
@@ -85,21 +64,9 @@ export function AnimatedBackground() {
           resize: { enable: true },
         },
         modes: {
-          grab: {
-            distance: isDark ? 205 : 170,
-            links: {
-              opacity: isDark ? 0.58 : 0.3,
-            },
-          },
-          bubble: {
-            distance: isDark ? 165 : 125,
-            size: isDark ? 6.4 : 4.6,
-            duration: 1.5,
-            opacity: isDark ? 1 : 0.75,
-          },
-          push: {
-            quantity: isDark ? 3 : 2,
-          },
+          grab: { distance: 205, links: { opacity: 0.58 } },
+          bubble: { distance: 165, size: 6.4, duration: 1.5, opacity: 1 },
+          push: { quantity: 3 },
         },
       },
     }),

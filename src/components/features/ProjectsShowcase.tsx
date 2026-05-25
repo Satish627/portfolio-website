@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import anime from "animejs";
+import { useRef } from "react";
 import {
   motion,
   useInView,
@@ -26,26 +25,10 @@ export function ProjectsShowcase({
   projects: readonly ProjectItem[];
 }) {
   const projectsRef = useRef<HTMLDivElement | null>(null);
-  const projectsBadgeRef = useRef<HTMLSpanElement | null>(null);
   const projectsInView = useInView(projectsRef, { once: true, amount: 0.05 });
   const reduceMotion = useReducedMotion();
   const projectIcons = [Rocket, Code2, FolderKanban] as const;
   const visibleProjects = projects.slice(0, 6);
-
-  useEffect(() => {
-    if (reduceMotion || !projectsBadgeRef.current) return;
-
-    const animation = anime({
-      targets: projectsBadgeRef.current,
-      scale: [1, 1.06],
-      duration: 1700,
-      easing: "easeInOutSine",
-      direction: "alternate",
-      loop: true,
-    });
-
-    return () => animation.pause();
-  }, [reduceMotion]);
 
   return (
     <motion.div
@@ -56,7 +39,7 @@ export function ProjectsShowcase({
       transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <motion.div
-        className="pointer-events-none absolute -left-6 -top-6 h-28 w-28 rounded-full bg-amber-300/15 blur-2xl md:-left-10 md:-top-8 md:h-40 md:w-40 md:bg-amber-300/20 md:blur-3xl dark:bg-amber-500/15 md:dark:bg-amber-500/20"
+        className="pointer-events-none absolute -left-6 -top-6 h-28 w-28 rounded-full bg-emerald-300/15 blur-2xl md:-left-10 md:-top-8 md:h-40 md:w-40 md:bg-emerald-300/20 md:blur-3xl dark:bg-emerald-500/15 md:dark:bg-emerald-500/20"
         animate={
           reduceMotion || !projectsInView
             ? { opacity: 0.45, scale: 1 }
@@ -69,7 +52,7 @@ export function ProjectsShowcase({
         }
       />
       <motion.div
-        className="pointer-events-none absolute -bottom-6 right-0 h-28 w-28 rounded-full bg-cyan-300/15 blur-2xl md:-bottom-10 md:h-44 md:w-44 md:bg-cyan-300/20 md:blur-3xl dark:bg-cyan-500/15 md:dark:bg-cyan-500/20"
+        className="pointer-events-none absolute -bottom-6 right-0 h-28 w-28 rounded-full bg-teal-300/15 blur-2xl md:-bottom-10 md:h-44 md:w-44 md:bg-teal-300/20 md:blur-3xl dark:bg-teal-500/15 md:dark:bg-teal-500/20"
         animate={
           reduceMotion || !projectsInView
             ? { opacity: 0.42, scale: 1 }
@@ -82,33 +65,7 @@ export function ProjectsShowcase({
         }
       />
 
-      <div className="relative rounded-3xl border border-border/70 bg-linear-to-b from-background/95 via-card/98 to-card/90 p-5 shadow-[0_22px_55px_-42px_rgba(0,0,0,0.7)] backdrop-blur-xl md:p-6">
-        <div className="mb-5 flex items-center justify-between gap-3">
-          <motion.div
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
-            animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-            transition={{ duration: 0.42, ease: [0.2, 0.8, 0.2, 1] }}
-          >
-            <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-              <FolderKanban className="h-3.5 w-3.5" />
-              Featured Work
-            </p>
-            <h3 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
-              Selected projects from study and real-world building
-            </h3>
-          </motion.div>
-          <motion.span
-            ref={projectsBadgeRef}
-            className="rounded-full border border-border/70 bg-background/75 px-3 py-1 text-xs font-medium text-foreground/80"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
-            animate={projectsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
-            transition={{ duration: 0.38, delay: 0.08, ease: [0.2, 0.8, 0.2, 1] }}
-          >
-            {visibleProjects.length} Projects
-          </motion.span>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
           {visibleProjects.map((project, index) => {
             const Icon = projectIcons[index % projectIcons.length];
             return (
@@ -191,7 +148,6 @@ export function ProjectsShowcase({
             </a>
           </Button>
         </div>
-      </div>
     </motion.div>
   );
 }

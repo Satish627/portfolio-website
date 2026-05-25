@@ -85,6 +85,7 @@ export type HomeSectionContent = {
   id: string;
   badge: string;
   headline: string;
+  tagline?: string;
   paragraphs: readonly string[];
   techStack: readonly string[];
   ctas: readonly HomeCta[];

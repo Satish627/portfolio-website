@@ -61,7 +61,7 @@ export function SkillsShowcase({
               delay: catIdx * 0.12,
               ease: [0.2, 0.8, 0.2, 1],
             }}
-            className="relative overflow-hidden rounded-2xl border border-border/70 bg-background/95 p-5 backdrop-blur"
+            className="relative overflow-hidden rounded-2xl border border-border/70 bg-background/95 p-5 backdrop-blur shadow-sm transition-[border-color,box-shadow] hover:border-primary/40 hover:shadow-[0_18px_40px_-26px_rgba(0,0,0,0.5)]"
           >
             {/* Ambient glow */}
             <div
@@ -86,7 +86,7 @@ export function SkillsShowcase({
                         {skill.name}
                       </span>
                       <motion.span
-                        className="text-xs font-semibold tabular-nums text-muted-foreground"
+                        className={`text-xs font-semibold tabular-nums ${cfg.textClass}`}
                         initial={{ opacity: 0 }}
                         animate={inView ? { opacity: 1 } : { opacity: 0 }}
                         transition={{
@@ -99,7 +99,7 @@ export function SkillsShowcase({
                         {skill.level}%
                       </motion.span>
                     </div>
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-border/40">
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-border/30">
                       <motion.div
                         className={`h-full rounded-full ${cfg.barClass}`}
                         initial={{ width: 0 }}

@@ -122,25 +122,11 @@ export function EducationTimeline({
   return (
     <motion.div
       ref={timelineRef}
-      className="relative mt-4 w-full overflow-visible rounded-3xl border border-border/70 bg-gradient-to-b from-card via-card/95 to-card/75 p-4 shadow-sm md:p-6"
+      className="relative mt-4 w-full"
       initial={{ opacity: 0, y: 20 }}
       animate={timelineInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
     >
-      <motion.div
-        className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full bg-primary/8 blur-2xl md:-right-20 md:-top-24 md:h-56 md:w-56 md:bg-primary/12 md:blur-3xl"
-        animate={
-          reduceMotion || !timelineInView
-            ? { opacity: 0.32, scale: 1 }
-            : { opacity: [0.35, 0.8, 0.35], scale: [0.98, 1.06, 0.98] }
-        }
-        transition={
-          reduceMotion
-            ? undefined
-            : { duration: 5.5, ease: "easeInOut", repeat: Infinity }
-        }
-      />
-
       <div className="relative space-y-4">
         <div className="relative pl-10">
           <div className="absolute bottom-2 left-4 top-2 w-px bg-border/80" />
